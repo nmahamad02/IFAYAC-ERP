@@ -1,0 +1,403 @@
+<br>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-title align="start">                    
+                        <i class="bi bi-people-fill"></i>
+                        {{ custCount }}
+                    </mat-card-title>
+                    <mat-card-subtitle>Customers (B2C)</mat-card-subtitle>
+                </mat-card-header>
+                <br>
+            </mat-card>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-title align="start">                    
+                        <i class="bi bi-buildings-fill"></i>
+                        {{ busiCount }}
+                    </mat-card-title>
+                    <mat-card-subtitle>Businesses (B2B)</mat-card-subtitle>
+                </mat-card-header>
+                <br>
+            </mat-card>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-title align="start">                    
+                        <i class="bi bi-truck-front-fill"></i>
+                        {{ suppCount }}
+                    </mat-card-title>
+                    <mat-card-subtitle>Suppliers</mat-card-subtitle>
+                </mat-card-header>
+                <br>
+            </mat-card>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-title align="start">                    
+                        <i class="bi bi-building-gear"></i>
+                        {{ indsCount }}
+                    </mat-card-title>
+                    <mat-card-subtitle>Industries</mat-card-subtitle>
+                </mat-card-header>
+                <br>
+            </mat-card>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-title align="start">                    
+                        <i class="bi bi-collection-fill"></i>
+                        {{ orgnCount }}
+                    </mat-card-title>
+                    <mat-card-subtitle>Organisations</mat-card-subtitle>
+                </mat-card-header>
+                <br>
+            </mat-card>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <mat-card appearance="outlined">
+              <mat-card-header>
+                <mat-card-title align="start" style="display: flex; align-items: center; gap: 8px;">
+                    <img 
+                      [src]="'https://flagcdn.com/w40/' + selectedCountryCode + '.png'" 
+                      alt="flag" 
+                      style="width: 24px; height: auto;"
+                    />
+                    
+                    <div style="flex: 1;">
+                      <mat-select 
+                        [(value)]="selectedCountry" 
+                        (selectionChange)="updateFlag($event.value)" 
+                        disableRipple
+                        style="width: 100%; padding: 0; margin: 0;"
+                      >
+                        <mat-option *ngFor="let country of countries" [value]="country.name">
+                          {{ country.name }}
+                        </mat-option>
+                      </mat-select>
+                    </div>
+                  </mat-card-title>
+                  
+                <mat-card-subtitle>Country</mat-card-subtitle>
+              </mat-card-header>
+              <br>
+            </mat-card>
+          </div>          
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-12">
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-subtitle>Monthwise Total Sales (KWD)</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <ngx-charts-line-chart
+                    [results]="monthlySales"
+                    [xAxis]="true"
+                    [yAxis]="true"
+                    [legend]="true"
+                    [showXAxisLabel]="true"
+                    [showYAxisLabel]="true"
+                    [xAxisLabel]="'Month'"
+                    [yAxisLabel]="'Revenue (KWD)'"
+                    [autoScale]="false"
+                    [animations]="true"
+                    [timeline]="false">
+                    </ngx-charts-line-chart>
+                </mat-card-content>
+            </mat-card>  
+        </div>
+    </div>
+    <br>
+    <!--<div class="row">
+        <div class="col-12">
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-subtitle>Monthwise Total Invoiced (KWD)</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <ngx-charts-line-chart
+                      [results]="monthwiseSalesdata"
+                      [xAxis]="true"
+                      [yAxis]="true"
+                      [legend]="false"
+                      [showXAxisLabel]="false"
+                      [showYAxisLabel]="false"
+                      [xAxisLabel]="'Month'"
+                      [yAxisLabel]="'Total Invoiced (KWD)'"
+                      [autoScale]="false"
+                      [animations]="true"
+                      [timeline]="false">
+                    </ngx-charts-line-chart>
+                </mat-card-content>
+            </mat-card>  
+        </div>
+    </div>-->
+    <br>
+    <div class="row">
+        <!-- FAST MOVERS -->
+        <div class="col-6">
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-subtitle>Top 10 Fast-Moving Brands</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <mat-tab-group (selectedTabChange)="onTabChange($event, 'fast')">
+                        <mat-tab label="1 Month"></mat-tab>
+                        <mat-tab label="3 Months"></mat-tab>
+                        <mat-tab label="6 Months"></mat-tab>
+                        <mat-tab label="12 Months"></mat-tab>
+                    </mat-tab-group>
+                    
+                    <table class="table table-sm mt-2">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Brand</th>
+                                <th>Quantity Sold</th>
+                                <th class="text-end">Sales</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let brand of displayFastBrands; let i = index">
+                                <td>{{ i + 1 }}</td>
+                                <td>{{ brand.BRAND }}</td>
+                                <td>{{ brand.QTY }}</td>
+                                <td class="text-end">{{ brand.SALE | number:'1.0-3' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <!-- SLOW MOVERS -->
+        <div class="col-6">
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-subtitle>Top 10 Slow-Moving Brands</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <mat-tab-group (selectedTabChange)="onTabChange($event, 'slow')">
+                        <mat-tab label="1 Month"></mat-tab>
+                        <mat-tab label="3 Months"></mat-tab>
+                        <mat-tab label="6 Months"></mat-tab>
+                        <mat-tab label="12 Months"></mat-tab>
+                    </mat-tab-group>
+                    
+                    <table class="table table-sm mt-2">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Brand</th>
+                                <th>Quantity Sold</th>
+                                <th class="text-end">Sales</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let brand of displaySlowBrands; let i = index">
+                                <td>{{ i + 1 }}</td>
+                                <td>{{ brand.BRAND }}</td>
+                                <td>{{ brand.QTY }}</td>
+                                <td class="text-end">{{ brand.SALE | number:'1.0-3' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-4">
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-subtitle>Top 10 Businesses (B2B) [Past 12 Months]</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <table class="table table-sm">
+                        <thead>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let business of topBusiList; let i = index">
+                                <td>{{ i + 1 }}</td>
+                                <td>
+                                    <img [src]="'https://flagcdn.com/w20/' + getCountryCode(business.COUNTRY, business.CURRENCY).toLowerCase() + '.png'" alt="{{ business.COUNTRY || business.CURRENCY }}"  style="width: 25px; height: auto;" style="margin-right: 8px;"/> 
+                                    {{ business.CUST_NAME }}
+                                </td>
+                                <td class="text-end">
+                                    {{ business.TOTAL_AMOUNT_KWD | currency:'KWD' }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </mat-card-content>
+            </mat-card>      
+        </div>
+        <div class="col-4">
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-subtitle>Top 10 Customers (B2C) [Past 12 Months]</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <table class="table table-sm">
+                        <thead>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let business of topCustList; let i = index">
+                                <td>{{ i + 1 }}</td>
+                                <td>
+                                    {{ business.CUSTOMERID }}
+                                </td>
+                                <td>
+                                    {{ business.CUSTOMERNAME }}
+                                </td>
+                                <td class="text-end">
+                                    {{ business.TotalValue_KWD | currency:'KWD' }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </mat-card-content>
+            </mat-card>      
+        </div>
+        <div class="col-4">
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-subtitle>Top 10 Suppliers [Past 12 Months]</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <table class="table table-sm">
+                        <thead>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let supplier of topSuppList; let i = index">
+                                <td>{{ i + 1 }}</td>
+                                <td>
+                                    <img [src]="'https://flagcdn.com/w20/' + getCountryCode(supplier.COUNTRY, supplier.CURRENCY).toLowerCase() + '.png'" alt="{{ supplier.COUNTRY || supplier.CURRENCY }}" style="width: 25px; height: auto;" style="margin-right: 8px;"/>
+                                    {{ supplier.CUST_NAME }}
+                                </td>
+                                <td class="text-end">
+                                    {{ supplier.TOTAL_AMOUNT_KWD | currency:'KWD' }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </mat-card-content>
+            </mat-card>      
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-6">
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-subtitle>Top 10 Products/Services [Past 12 Months]</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <table class="table table-sm">
+                        <thead>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Value</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let product of topProdList; let i = index">
+                                <td>{{ i + 1 }}</td>
+                                <td>
+                                    {{ product.productName }}
+                                </td>
+                                <td>
+                                    {{ product.productCategoryName }}
+                                </td>
+                                <td class="text-end">
+                                    {{ product.TotalValue_KWD | currency:'KWD' }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </mat-card-content>
+            </mat-card>      
+        </div>
+        <div class="col-6">
+            <mat-card appearance="outlined" class="pie-card">
+                <mat-card-header>
+                    <mat-card-subtitle>Sales at Locations (KWD) [Past 12 Months]</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content class="pie-card-content">
+                    <div class="chart-wrapper">
+                        <ngx-charts-pie-chart
+                        [results]="topLocaList"
+                        [legend]="true"
+                        [legendPosition]="legendPosition"
+                        [labels]="false"
+                        [doughnut]="false"
+                        [explodeSlices]="false">
+                    </ngx-charts-pie-chart>
+                </div>
+            </mat-card-content>
+        </mat-card>
+        </div>
+    </div>
+    <br>
+   <!--
+    <div class="row">
+        <div class="col-4">
+            <ngx-charts-bar-vertical 
+              [results]="barData"
+              [xAxis]="true"
+              [yAxis]="true"
+              [legend]="false"
+              [showDataLabel]="true">
+              [scheme]="{ domain: ['#5AA454', '#A10A28', '#C7B42C'] }">
+            </ngx-charts-bar-vertical>
+        </div>
+        <div class="col-4">
+            <ngx-charts-line-chart
+              [results]="lineData"
+              [xAxis]="true"
+              [yAxis]="true"
+              [legend]="true"
+              [showXAxisLabel]="true"  
+              [showYAxisLabel]="true"
+              [autoScale]="true">
+            </ngx-charts-line-chart>
+        </div>
+        <div class="col-4">
+            <ngx-charts-pie-chart
+              [results]="pieData"
+              [legend]="true"
+              [explodeSlices]="false"
+              [labels]="true">
+            </ngx-charts-pie-chart>
+        </div>
+    </div>
+    <br>
+    --> 
+    
+    <div class="row">
+        <div class="col-12"></div>
+    </div>
+</div>
+
+
+
