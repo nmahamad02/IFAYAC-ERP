@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CustomerMasterComponent } from './customer-component/customer-master/customer-master.component';
 import { CustomerDetailComponent } from './customer-component/customer-detail/customer-detail.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,32 +20,13 @@ import { MatTreeModule } from '@angular/material/tree';
 import { RouterModule } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
-import { ReceiptVoucherDetailComponent } from './receipt-voucher-component/receipt-voucher-detail/receipt-voucher-detail.component';
-import { ReceiptVoucherListComponent } from './receipt-voucher-component/receipt-voucher-list/receipt-voucher-list.component';
-import { ReceiptVoucherAllocationComponent } from './receipt-voucher-component/receipt-voucher-allocation/receipt-voucher-allocation.component';
 import { SharedModule } from '../shared/shared.module';
 import { ReportsComponent } from './reports-component/reports/reports.component';
 
 export const receivablesRoutes = [
   {
-    path: 'customer-master',
-    component: CustomerMasterComponent
-  } ,
-  {
     path: 'customer/detail/:pcode',
     component: CustomerDetailComponent
-  },
-  {
-    path: 'receipt-voucher',
-    component: ReceiptVoucherListComponent
-  } ,
-  {
-    path: 'receipt-voucher/detail/:id',
-    component: ReceiptVoucherDetailComponent
-  },
-  {
-    path: 'receipt-voucher/allocation/:id/:pcode',
-    component: ReceiptVoucherAllocationComponent
   },
   {
     path: 'Financial-Reports',
@@ -56,11 +36,7 @@ export const receivablesRoutes = [
 
 @NgModule({
   declarations: [
-    CustomerMasterComponent,
     CustomerDetailComponent,
-    ReceiptVoucherDetailComponent,
-    ReceiptVoucherListComponent,
-    ReceiptVoucherAllocationComponent,
     ReportsComponent
   ],
   imports: [

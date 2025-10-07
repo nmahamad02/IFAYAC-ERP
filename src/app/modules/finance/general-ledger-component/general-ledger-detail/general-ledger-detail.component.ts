@@ -126,7 +126,7 @@ export class GeneralLedgerDetailComponent {
   
     quickSubLedgerSearch(search: string) {
       console.log(search)
-      this.accountService.searchOpbal(this.currentYear.toString(),search,'G').subscribe((res: any) => {
+      this.accountService.searchOpbal(search,'G').subscribe((res: any) => {
         this.subLedgerList = res.recordset
         }, (err: any) => {
         console.log(err)
@@ -146,7 +146,7 @@ export class GeneralLedgerDetailComponent {
       if (pcode === 'new') {
         this.newForm();
       } else {
-        this.accountService.getOpbal(this.currentYear.toString(), pcode).subscribe((res: any) => {
+        this.accountService.getOpbal(pcode).subscribe((res: any) => {
           console.log(res)
           this.subLedgerForm  = new FormGroup({
             maingroup:new FormControl(res.recordset[0].GLCODE.charAt(0), [ Validators.required]),
@@ -178,7 +178,7 @@ export class GeneralLedgerDetailComponent {
     submitForm() {
       const data = this.subLedgerForm .value
       console.log(data)
-      this.accountService.getOpbal(this.currentYear.toString(), data.pcode).subscribe((res: any) => {
+      this.accountService.getOpbal(data.pcode).subscribe((res: any) => {
         if(res.recordset.length === 0) {
           /////INSERT
           this.accountService.postOpbal(data.pcode, data.title, data.subLedName, 'G', '', '', '', '', '', '', '', data.subLedAccountGroup, data.subLedStatus, data.remarks, '', data.subLedBranch, data.subLedAccountType, data.subLedAccountCategory, '',this.currentYear.toString(),data.opbal).subscribe(() => {

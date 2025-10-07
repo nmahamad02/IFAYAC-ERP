@@ -110,12 +110,12 @@ export class ReportsComponent {
 
   constructor(private financeService: FinanceService, private route: ActivatedRoute, private dialog: MatDialog, private router: Router, private accountService: AccountsService, private reportService: ReportsService, private dataSharingService: DataSharingService, private sapservice: SapService) { 
     console.log(this.userRight)
-    this.accountService.listOpbal(this.currentYear.toString(),'C').subscribe((res: any) => {
+    /*this.accountService.listOpbal(this.currentYear.toString(),'C').subscribe((res: any) => {
       console.log(res.recordset)
       this.customerList = res.recordset;
     }, (error: any) => {
       console.log(error);
-    });
+    });*/
     this.reportService.getParent().subscribe((res: any) => {
       console.log(res)
       this.parentList = res.recordset

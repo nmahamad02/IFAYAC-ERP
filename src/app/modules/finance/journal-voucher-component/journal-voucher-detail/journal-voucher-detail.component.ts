@@ -267,7 +267,7 @@ export class JournalVoucherDetailComponent {
           this.financeService.getSGLDataTemp(pcode).subscribe((respo: any) =>{
             console.log(respo)
             for(let i=0;i<respo.recordset.length;i++){
-              this.accountService.getOpbal(this.mCYear.toString(),respo.recordset[i].ACCODE).subscribe((respon: any) =>{
+              this.accountService.getOpbal(respo.recordset[i].ACCODE).subscribe((respon: any) =>{
                 console.log(respon)
                 const account = new FormGroup({
                   pcode: new FormControl(respo.recordset[i].ACCODE, [ Validators.required]),
@@ -445,7 +445,7 @@ export class JournalVoucherDetailComponent {
   
   quickAccountSearch(search: string) {
     console.log('Searching for:', search);
-    this.accountService.searchOpbal(this.mCYear.toString(), search, 'C').subscribe(
+    this.accountService.searchOpbal(search, 'C').subscribe(
       (res: any) => {
         this.accountList = res.recordset;
         this.selectedRowIndex = 0; // Reset selection on new results

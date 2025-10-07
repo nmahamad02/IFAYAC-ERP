@@ -45,7 +45,7 @@ export class DashboardComponent {
   periods = [1, 3, 6, 12];
 
   
-  updateFlag(countryName: string) {
+  /*updateFlag(countryName: string) {
     const selected = this.countries.find(c => c.name === countryName);
     this.selectedCountryCode = selected?.code ?? 'kw';
     if(countryName === 'All Countries') {
@@ -53,7 +53,8 @@ export class DashboardComponent {
     } else {
       this.getARData(countryName)
     }
-  }
+  }*/
+
 
   countryMap: { [key: string]: { code: string, currency: string } } = {
     'Bahrain': { code: 'bh', currency: 'BHD' },
@@ -86,40 +87,37 @@ export class DashboardComponent {
   }
 
   getCurrency(name: string): string {
-    return this.countryMap[name]?.currency || 'KWD';
+    return this.countryMap[name]?.currency || 'BHD';
   }
   
   constructor(private reportService : ReportsService) {
-    this.getARData('*');
+    this.getARData();
   }
 
-  getARData(country: string){
-    this.reportService.getCustomerCount().subscribe((res: any) => {
-      this.custCount = res.recordset[0].CUSTCOUNT
-    })    
-    this.reportService.getBusinessCount(country,'C').subscribe((res: any) => {
-      this.busiCount = res.recordset[0].CUSTCOUNT
-    })
-    this.reportService.getBusinessList(country,'C').subscribe((res: any) => {
+  getARData(){
+    this.reportService.getCustomerList('C').subscribe((res: any) => {
+      this.custCount = res.length
+    })  
+    this.reportService.getBusinessList('C').subscribe((res: any) => {
       this.topBusiList = res.recordset
     })
-    this.reportService.getCustomerList().subscribe((res: any) => {
+    this.reportService.getCustomerList('C').subscribe((res: any) => {
       this.topCustList = res.recordset
     })
     this.reportService.getProductList().subscribe((res: any) => {
       this.topProdList = res.recordset
     })    
-    this.reportService.getLocationList().subscribe((res: any) => {
+    /*this.reportService.getLocationList().subscribe((res: any) => {
       const raw = res.recordset;
       this.topLocaList = raw.map((r: any) => ({
         name: r.LOCATIONNAME + ' (' + r.PercentageShare + '%)',
-        value: r.TotalValue_KWD
+        value: r.TotalValue_BHD
       }));
-    });
-    this.reportService.getBusinessCount(country,'S').subscribe((res: any) => {
-      this.suppCount = res.recordset[0].CUSTCOUNT
+    });*/
+    this.reportService.getCustomerList('S').subscribe((res: any) => {
+      this.suppCount = res.length
     })
-    this.reportService.getBusinessList(country,'S').subscribe((res: any) => {
+    this.reportService.getBusinessList('S').subscribe((res: any) => {
       this.topSuppList = res.recordset
     })
     this.reportService.getIndustry().subscribe((res: any) => {
@@ -135,7 +133,7 @@ export class DashboardComponent {
       console.log(res)
       this.countrywiseYearwiseChartData = res.recordset
     })
-    this.reportService.getMonthwiseSalesdata(country).subscribe((res: any) => {
+    this.reportService.getMonthwiseSalesdata('country').subscribe((res: any) => {
       const monthNames = [
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
@@ -168,15 +166,15 @@ export class DashboardComponent {
       };
       const b2bSeries = raw.map((r: any) => ({
         name: formatMonth(r.MonthYear),
-        value: r.B2B_Revenue_KWD
+        value: r.B2B_Revenue_BHD
       }));
       const b2cSeries = raw.map((r: any) => ({
         name: formatMonth(r.MonthYear),
-        value: r.B2C_Revenue_KWD
+        value: r.B2C_Revenue_BHD
       }));
       const totalSeries = raw.map((r: any) => ({
         name: formatMonth(r.MonthYear),
-        value: r.B2B_Revenue_KWD + r.B2C_Revenue_KWD
+        value: r.B2B_Revenue_BHD + r.B2C_Revenue_BHD
       }));
       this.monthlySales = [
         { name: 'B2B', series: b2bSeries },

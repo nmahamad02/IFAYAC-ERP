@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SupplierMasterComponent } from './supplier-component/supplier-master/supplier-master.component';
 import { SupplierDetailComponent } from './supplier-component/supplier-detail/supplier-detail.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,10 +25,6 @@ import { SharedModule } from '../shared/shared.module';
 
 export const payablesRoutes = [
   {
-    path: 'supplier-master',
-    component: SupplierMasterComponent
-  } ,
-  {
     path: 'supplier/detail/:pcode',
     component: SupplierDetailComponent
   },
@@ -45,7 +40,6 @@ export const payablesRoutes = [
 
 @NgModule({
   declarations: [
-    SupplierMasterComponent,
     SupplierDetailComponent,
     PaymentVoucherDetailComponent,
     PaymentVoucherListComponent,
