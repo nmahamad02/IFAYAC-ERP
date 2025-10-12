@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class ReportsService {
-  private url1 = 'http://20.203.120.150:5000/api';
+  private url1 = 'https://ifayacapi.theworkpc.com/api';
   private url2 = 'https://api.ifagate-petzone.theworkpc.com/api'
 
   constructor(private http:HttpClient) { }
@@ -19,11 +19,11 @@ export class ReportsService {
   }  
 
   getBusinessList(type: string) {
-    return this.http.get(this.url1 + '/listbp/' + type)
+    return this.http.get(this.url1 + '/hana/listbp/' + type)
   }
 
   getCustomerList(type: string) {
-    return this.http.get(this.url1 + '/listbp/' + type)
+    return this.http.get(this.url1 + '/hana/listbp/' + type)
   }  
   
   getProductList() {
@@ -44,7 +44,7 @@ export class ReportsService {
 
   getCustomerSoa(type: string,pcode: string) {
    // return this.http.get(this.url2 + '/report/get-customer-soa/' + type + '/' + pcode)
-    return this.http.get(this.url1 + '/getcuststmt/' + pcode)
+    return this.http.get(this.url1 + '/hana/getcuststmt/' + pcode)
   }
 
   getParentSoa(parentcode: string) {

@@ -6,28 +6,27 @@ import { Injectable } from '@angular/core';
 })
 export class AccountsService {
 
-  private url1 = 'http://20.203.120.150:5000/api';
-  private url2 = 'https://api.ifagate-petzone.theworkpc.com/api'
+  private url = 'https://ifayacapi.theworkpc.com/api';
 
   constructor(private http:HttpClient) { }
 
   listOpbal(type: string) {
-    //return this.http.get(this.url2 + '/opbal/list/' + year + '/' + type)
-    return this.http.get(this.url1 + '/listbp/' + type)
+    //return this.http.get(this.url + '/opbal/list/' + year + '/' + type)
+    return this.http.get(this.url + '/hana/listbp/' + type)
   }    
 
   getOpbal(pcode: string) {
-    //return this.http.get(this.url2 + '/opbal/get/' + year + '/' + pcode)
-    return this.http.get(this.url1 + '/getbp/' + pcode)
+    //return this.http.get(this.url + '/opbal/get/' + year + '/' + pcode)
+    return this.http.get(this.url + '/hana/getbp/' + pcode)
   } 
 
   searchOpbal(search: string, type: string) {
-    //return this.http.get(this.url2 + '/opbal/search/' + year + '/' + search + '/' + type)
-    return this.http.get(this.url1 + '/searchbp/' + type + '/' + search)
+    //return this.http.get(this.url + '/opbal/search/' + year + '/' + search + '/' + type)
+    return this.http.get(this.url + '/hana/searchbp/' + type + '/' + search)
   } 
 
   getTitle() {
-    return this.http.get(this.url2 + '/opbal/gettitle')
+    return this.http.get(this.url + '/opbal/gettitle')
   } 
 
   postOpbal(pcode: string, title: string, name: string, type: string, add1: string, add2: string, add3: string, phone1: string, phone2: string, email: string,mobile: string, glcode: string,status: string, remarks: string, taxno: string, branch: string, accType: string, accCategory: string,crcpr: string,year: string,opbal:number) {
@@ -56,7 +55,7 @@ export class AccountsService {
       year: year,
       opbal: opbal
     }
-    return this.http.post(this.url2 + '/opbal/newRecord', JSON.stringify(newTran), { headers: headers })
+    return this.http.post(this.url + '/opbal/newRecord', JSON.stringify(newTran), { headers: headers })
   }
 
   updateOpbal(pcode: string, title: string, name: string, type: string, add1: string, add2: string, add3: string, phone1: string, phone2: string, email: string,mobile: string, glcode: string,status: string, remarks: string, taxno: string, branch: string, accType: string, accCategory: string,crcpr: string,year: string,opbal:number) {
@@ -85,11 +84,11 @@ export class AccountsService {
       year: year,
       opbal: opbal
     }
-    return this.http.post(this.url2 + '/opbal/updateRecord', JSON.stringify(newTran), { headers: headers })
+    return this.http.post(this.url + '/opbal/updateRecord', JSON.stringify(newTran), { headers: headers })
   }
 
   getParty(pcode: string) {
-    return this.http.get(this.url2 + '/opbal/getParty/' + pcode)
+    return this.http.get(this.url + '/opbal/getParty/' + pcode)
   } 
 
   deleteParty(partyId: string) {
@@ -97,23 +96,23 @@ export class AccountsService {
     const newTran = {
       partyId: partyId
     }
-    return this.http.post(this.url2 + '/opbal/deleteParty', JSON.stringify(newTran), { headers: headers })
+    return this.http.post(this.url + '/opbal/deleteParty', JSON.stringify(newTran), { headers: headers })
   } 
 
   getPartyIdMax() {
-    return this.http.get(this.url2 + '/opbal/getPartyIdMax')
+    return this.http.get(this.url + '/opbal/getPartyIdMax')
   } 
 
   getBranch() {
-    return this.http.get(this.url2 + '/opbal/getBranch')
+    return this.http.get(this.url + '/opbal/getBranch')
   } 
 
   getCustomerAccountType() {
-    return this.http.get(this.url2 + '/opbal/getCustomerAccountType')
+    return this.http.get(this.url + '/opbal/getCustomerAccountType')
   } 
 
   getAccountCategory() {
-    return this.http.get(this.url2 + '/opbal/getAccountCategory')
+    return this.http.get(this.url + '/opbal/getAccountCategory')
   }
 
   addNewParty(pcode: string, partyid: string, name: string, type: string, add1: string, add2: string, add3: string, phone1: string, phone2: string, email: string,mobile: string) {
@@ -132,7 +131,7 @@ export class AccountsService {
       email: email,
       mobile: mobile
     }
-    return this.http.post(this.url2 + '/opbal/addNewParty', JSON.stringify(newTran), { headers: headers })
+    return this.http.post(this.url + '/opbal/addNewParty', JSON.stringify(newTran), { headers: headers })
   }
 
   updatePartyDetails(pcode: string, partyid: string, name: string, type: string, add1: string, add2: string, add3: string, phone1: string, phone2: string, email: string,mobile: string) {
@@ -151,7 +150,7 @@ export class AccountsService {
       email: email,
       mobile: mobile
     }
-    return this.http.post(this.url2 + '/opbal/updatePartyDetails', JSON.stringify(newTran), { headers: headers })
+    return this.http.post(this.url + '/opbal/updatePartyDetails', JSON.stringify(newTran), { headers: headers })
   }
 
   

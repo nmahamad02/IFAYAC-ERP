@@ -63,35 +63,20 @@ export class LoginComponent {
     } 
     else {
       this.loading = true;
-      this.encrypt(data.password);
+      //this.encrypt(data.password);
       this.authenticationService.checkUser(data.username).subscribe ((res: any) => {
-        console.log(res.recordset[0]);
-        this.authenticationService.signin(res.recordset[0].USERCODE, res.recordset[0].FIRSTNAME, res.recordset[0].LASTNAME, res.recordset[0].USERID, res.recordset[0].SPECIAL_ADMIN_RIGHTS).subscribe((res: any) => {
-          this.router.navigate(['home/dashboard']).then(() => {
-            // Then reload after navigation completes
-            window.location.reload();
-          });
-        })
-        if(data.password === res.recordset[0].PASSWORD) {
+        console.log(res);
+        if(data.password === res.DECRYPTED_PASSWORD) {
           this.error = "";
-          console.log(data.password)
-          this.router.navigate(['home/dashboard']).then(() => {
+          this.authenticationService.signin(res.USERCODE, res.FIRSTNAME, res.LASTNAME, res.USERID, res.SPECIAL_ADMIN_RIGHTS).subscribe((res: any) => { 
+            this.router.navigate(['home/dashboard']).then(() => {
             // Then reload after navigation completes
             window.location.reload();
           });
-          // if signin success then:
-          /*this.crmservice.getMemberFromCPR(res.recordset[0].USERCODE).subscribe((resp: any) => {
-            this.authenticationService.signin(res.recordset[0].USERCODE, res.recordset[0].FIRSTNAME, res.recordset[0].LASTNAME, res.recordset[0].USERCLASS).subscribe((res: any) => {
-              this.router.navigate(['home/dashboard']);
-            })
-          }, (err: any) => {
-            this.authenticationService.signin(res.recordset[0].USERCODE, res.recordset[0].FIRSTNAME, res.recordset[0].LASTNAME, res.recordset[0].USERCLASS).subscribe((resP: any) => {
-              this.router.navigate(['home/dashboard']);
-            })
-          })*/
+          })
         }
         else {
-          this.error = "Password is incorrect!";
+          this.error = "Password is incorrect!"
         }
       },
       (err: any) => {
