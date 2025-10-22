@@ -1,0 +1,70 @@
+<div class="container-fluid">
+    <div class="row no-gutters">
+        <div class="visualization-heading col-12">
+            <div class="heading-info">
+                <div class="row">
+                    <div class="col">                
+                        <h3 class="heading-title">Service Calls</h3>
+                    </div>
+                    <div class="col-1">
+                        <div class="row">
+                            <div class="col">
+                                <button class="btn-info text-white btn btn-block btn-sm"  title="Print Service Calls" style="float: right" (click)="exportServiceCalls()">
+                                    <mat-icon>print</mat-icon> <!--Print Customer Statement of Account-->
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <input type="text" [(ngModel)]="searchText" class="form-control" placeholder="Search Calls..." />
+                        </div>
+                        <table class="table table-hover table-responsive-xxl">
+                            <thead class="table-dark">
+                                <tr class="table-reflow">
+                                    <th>CODE</th>
+                                    <th>NAME</th>
+                                    <th>FISCAL PERIOD</th>
+                                    <!--<th>ENTRY</th>-->
+                                    <th>ITEM NAME</th>
+                                    <th>REMARKS</th>
+                                    <th>SALES ORDER NO.</th>
+                                    <th>SO DATE</th>
+                                    <th>SO PRICE</th>
+                                    <!--<th>SO QUANTITY</th>-->
+                                    <th>SO TOTAL</th>
+                                    <th>SALES EMPLOYEE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let call of (callList | filterTable:searchText| slice:0:25); let i = index;">
+                                    <td>{{ call.CardCode }}</td>
+                                    <td>{{ call.CardName }}</td>
+                                    <td>{{ call.Code }}</td>
+                                    <!--<td>{{ call.DocEntry }}</td>-->
+                                    <td>{{ call["Item Name"] }}</td>
+                                    <td>{{ call.Remark }}</td>
+                                    <td>{{ call["SO Num"] }}</td>
+                                    <td>{{ call["SO Date"] | date: "shortDate"}}</td>
+                                    <td>{{ call["SO Price"] | number:'1.3-3' }}</td>
+                                    <!--<td>{{ call["SO Qty"] | number:'1.0-0'}}</td>-->
+                                    <td>{{ call["SO Total"] | number:'1.3-3' }}</td>
+                                    <td>{{ call.SlpName }}</td>
+                                   <!--- <td>
+                                        <button class="btn btn-sm btn-secondary" (click)="goToDetailForm(proj.CardCode)" title="View Project Details">
+                                            <mat-icon>edit</mat-icon>
+                                        </button>
+                                    </td>-->
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>   
+</div>
+<br>

@@ -22,9 +22,60 @@ export class ReportsService {
     return this.http.get(this.url1 + '/hana/listbp/' + type)
   }
 
+  getallemp() {
+    return this.http.get(this.url1 + '/hr/getallemp')
+  }    
+  
+  getallorders() {
+    return this.http.get(this.url1 + '/hana/getallorders')
+  }   
+  
+  getproductcount() {
+    return this.http.get(this.url1 + '/hana/getProductCount')
+  } 
+
   getCustomerList(type: string) {
     return this.http.get(this.url1 + '/hana/listbp/' + type)
+  }    
+  
+  getpj(prjcode: string) {
+    return this.http.get(this.url1 + '/hana/getpj/' + prjcode)
+  }    
+  
+  listJobStatus() {
+    return this.http.get(this.url1 + '/hana/listJobStatus')
+  }   
+  
+  getJobStatus(prjcode: string) {
+    return this.http.get(this.url1 + '/hana/getJobStatus/' + prjcode)
+  }    
+  
+  listAllJobs() {
+    return this.http.get(this.url1 + '/hana/listAllJobs')
+  }    
+  
+  listAllBusinessCenters() {
+    return this.http.get(this.url1 + '/hana/listAllBusinessCenters')
+  }    
+  
+  listAllBusinessCentreWiseJobs(busiCent: string) {
+    return this.http.get(this.url1 + '/hana/listAllBusinessCentreWiseJobs/' + busiCent)
+  }    
+  
+  listAllYearwiseBusinessCentreWiseJobs(busiCent: string, year: string) {
+    return this.http.get(this.url1 + '/hana/listAllYearwiseBusinessCentreWiseJobs/' + busiCent + '/' + year)
+  }    
+  
+  searchAllJobs(busiCent: string, year: string, search: string) {
+    return this.http.get(this.url1 + '/hana/searchAllJobs/'  + busiCent + '/' + year + '/' + search)
   }  
+
+  getAllJobs(busiCent: string, year: string, prjcode: string) {
+    return this.http.get(this.url1 + '/hana/getAllJobs/'  + busiCent + '/' + year + '/' + prjcode)
+  }  
+
+
+
   
   getProductList() {
     return this.http.get(this.url2 + '/report/get-product-list')

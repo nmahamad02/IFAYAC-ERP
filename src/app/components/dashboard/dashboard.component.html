@@ -2,7 +2,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-            <mat-card appearance="outlined">
+            <mat-card appearance="outlined" style="background-color: #3B82F6; color: white;">
                 <mat-card-header>
                     <mat-card-title align="start">                    
                         <i class="bi bi-people-fill"></i>
@@ -14,7 +14,7 @@
             </mat-card>
         </div>
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-            <mat-card appearance="outlined">
+            <mat-card appearance="outlined" style="background-color: #10B981; color: white;">
                 <mat-card-header>
                     <mat-card-title align="start">                    
                         <i class="bi bi-truck-front-fill"></i>
@@ -26,47 +26,71 @@
             </mat-card>
         </div>
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-            <mat-card appearance="outlined">
+            <mat-card appearance="outlined" style="background-color: #F59E0B;color: white; ">
                 <mat-card-header>
                     <mat-card-title align="start">                    
                         <i class="bi bi-building-gear"></i>
-                        {{ indsCount }}
+                        {{ busiCount }}
                     </mat-card-title>
-                    <mat-card-subtitle>Industries</mat-card-subtitle>
+                    <mat-card-subtitle>Business Centres</mat-card-subtitle>
                 </mat-card-header>
                 <br>
             </mat-card>
         </div>
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-            <mat-card appearance="outlined">
+            <mat-card appearance="outlined" style="background-color:#6366F1; color: white;">
                 <mat-card-header>
                     <mat-card-title align="start">                    
-                        <i class="bi bi-collection-fill"></i>
-                        {{ orgnCount }}
+                        <i class="bi bi-file-person-fill"></i>
+                        {{ emplCount }}
                     </mat-card-title>
-                    <mat-card-subtitle>Organisations</mat-card-subtitle>
+                    <mat-card-subtitle>Employees</mat-card-subtitle>
                 </mat-card-header>
                 <br>
             </mat-card>
         </div>    
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <mat-card appearance="outlined" style="background-color:#06B6D4; color: white;">
+                <mat-card-header>
+                    <mat-card-title align="start">                    
+                        <i class="bi bi-backpack-fill"></i>
+                        {{ stckCount }}
+                    </mat-card-title>
+                    <mat-card-subtitle>Stock in Stores</mat-card-subtitle>
+                </mat-card-header>
+                <br>
+            </mat-card>
+        </div>   
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <mat-card appearance="outlined" style="background-color:#EF4444; color: white;">
+                <mat-card-header>
+                    <mat-card-title align="start">                    
+                        <i class="bi bi-tools"></i>
+                        {{ jobsCount }}
+                    </mat-card-title>
+                    <mat-card-subtitle>Jobs</mat-card-subtitle>
+                </mat-card-header>
+                <br>
+            </mat-card>
+        </div>     
     </div>
     <br>
     <div class="row">
         <div class="col-12">
             <mat-card appearance="outlined">
                 <mat-card-header>
-                    <mat-card-subtitle>Monthwise Total Sales (BHD)</mat-card-subtitle>
+                    <mat-card-subtitle>Monthwise Orders (BHD)</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
                     <ngx-charts-line-chart
-                    [results]="monthlySales"
+                    [results]="monthwiseSalesdata"
                     [xAxis]="true"
                     [yAxis]="true"
                     [legend]="true"
                     [showXAxisLabel]="true"
                     [showYAxisLabel]="true"
                     [xAxisLabel]="'Month'"
-                    [yAxisLabel]="'Revenue (BHD)'"
+                    [yAxisLabel]="'Booking (BHD)'"
                     [autoScale]="false"
                     [animations]="true"
                     [timeline]="false">
@@ -76,37 +100,14 @@
         </div>
     </div>
     <br>
-    <!--<div class="row">
-        <div class="col-12">
-            <mat-card appearance="outlined">
-                <mat-card-header>
-                    <mat-card-subtitle>Monthwise Total Invoiced (BHD)</mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-content>
-                    <ngx-charts-line-chart
-                      [results]="monthwiseSalesdata"
-                      [xAxis]="true"
-                      [yAxis]="true"
-                      [legend]="false"
-                      [showXAxisLabel]="false"
-                      [showYAxisLabel]="false"
-                      [xAxisLabel]="'Month'"
-                      [yAxisLabel]="'Total Invoiced (BHD)'"
-                      [autoScale]="false"
-                      [animations]="true"
-                      [timeline]="false">
-                    </ngx-charts-line-chart>
-                </mat-card-content>
-            </mat-card>  
-        </div>
-    </div>-->
+    
     <br>
     <div class="row">
         <!-- FAST MOVERS -->
         <div class="col-6">
             <mat-card appearance="outlined">
                 <mat-card-header>
-                    <mat-card-subtitle>Top 10 Fast-Moving Brands</mat-card-subtitle>
+                    <mat-card-subtitle>Top 10 Fast-Moving Categories</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
                     <mat-tab-group (selectedTabChange)="onTabChange($event, 'fast')">
@@ -120,19 +121,19 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Brand</th>
+                                <th>Category</th>
                                 <th>Quantity Sold</th>
                                 <th class="text-end">Sales</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <!--<tbody>
                             <tr *ngFor="let brand of displayFastBrands; let i = index">
                                 <td>{{ i + 1 }}</td>
                                 <td>{{ brand.BRAND }}</td>
                                 <td>{{ brand.QTY }}</td>
                                 <td class="text-end">{{ brand.SALE | number:'1.0-3' }}</td>
                             </tr>
-                        </tbody>
+                        </tbody>-->
                     </table>
                 </mat-card-content>
             </mat-card>
@@ -142,7 +143,7 @@
         <div class="col-6">
             <mat-card appearance="outlined">
                 <mat-card-header>
-                    <mat-card-subtitle>Top 10 Slow-Moving Brands</mat-card-subtitle>
+                    <mat-card-subtitle>Top 10 Slow-Moving Categories</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
                     <mat-tab-group (selectedTabChange)="onTabChange($event, 'slow')">
@@ -156,19 +157,19 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Brand</th>
+                                <th>Category</th>
                                 <th>Quantity Sold</th>
                                 <th class="text-end">Sales</th>
                             </tr>
                         </thead>
-                        <tbody>
+                       <!--- <tbody>
                             <tr *ngFor="let brand of displaySlowBrands; let i = index">
                                 <td>{{ i + 1 }}</td>
                                 <td>{{ brand.BRAND }}</td>
                                 <td>{{ brand.QTY }}</td>
                                 <td class="text-end">{{ brand.SALE | number:'1.0-3' }}</td>
                             </tr>
-                        </tbody>
+                        </tbody>-->
                     </table>
                 </mat-card-content>
             </mat-card>
@@ -189,16 +190,7 @@
                             <th></th>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let business of topBusiList; let i = index">
-                                <td>{{ i + 1 }}</td>
-                                <td>
-                                    <img [src]="'https://flagcdn.com/w20/' + getCountryCode(business.COUNTRY, business.CURRENCY).toLowerCase() + '.png'" alt="{{ business.COUNTRY || business.CURRENCY }}"  style="width: 25px; height: auto;" style="margin-right: 8px;"/> 
-                                    {{ business.CUST_NAME }}
-                                </td>
-                                <td class="text-end">
-                                    {{ business.TOTAL_AMOUNT_BHD | currency:'BHD' }}
-                                </td>
-                            </tr>
+                            
                         </tbody>
                     </table>
                 </mat-card-content>
@@ -218,7 +210,7 @@
                             <th></th>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let business of topCustList; let i = index">
+                            <!--<tr *ngFor="let business of topCustList; let i = index">
                                 <td>{{ i + 1 }}</td>
                                 <td>
                                     {{ business.CUSTOMERID }}
@@ -229,7 +221,7 @@
                                 <td class="text-end">
                                     {{ business.TotalValue_BHD | currency:'BHD' }}
                                 </td>
-                            </tr>
+                            </tr>-->
                         </tbody>
                     </table>
                 </mat-card-content>
@@ -248,16 +240,7 @@
                             <th></th>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let supplier of topSuppList; let i = index">
-                                <td>{{ i + 1 }}</td>
-                                <td>
-                                    <img [src]="'https://flagcdn.com/w20/' + getCountryCode(supplier.COUNTRY, supplier.CURRENCY).toLowerCase() + '.png'" alt="{{ supplier.COUNTRY || supplier.CURRENCY }}" style="width: 25px; height: auto;" style="margin-right: 8px;"/>
-                                    {{ supplier.CUST_NAME }}
-                                </td>
-                                <td class="text-end">
-                                    {{ supplier.TOTAL_AMOUNT_BHD | currency:'BHD' }}
-                                </td>
-                            </tr>
+                            
                         </tbody>
                     </table>
                 </mat-card-content>
@@ -280,7 +263,7 @@
                             <th>Value</th>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let product of topProdList; let i = index">
+                            <!--<tr *ngFor="let product of topProdList; let i = index">
                                 <td>{{ i + 1 }}</td>
                                 <td>
                                     {{ product.productName }}
@@ -291,7 +274,7 @@
                                 <td class="text-end">
                                     {{ product.TotalValue_BHD | currency:'BHD' }}
                                 </td>
-                            </tr>
+                            </tr>-->
                         </tbody>
                     </table>
                 </mat-card-content>
@@ -300,9 +283,9 @@
         <div class="col-6">
             <mat-card appearance="outlined" class="pie-card">
                 <mat-card-header>
-                    <mat-card-subtitle>Sales at Locations (BHD) [Past 12 Months]</mat-card-subtitle>
+                    <mat-card-subtitle>Business Centre Revenue (BHD) [Past 12 Months]</mat-card-subtitle>
                 </mat-card-header>
-                <mat-card-content class="pie-card-content">
+                <!--<mat-card-content class="pie-card-content">
                     <div class="chart-wrapper">
                         <ngx-charts-pie-chart
                         [results]="topLocaList"
@@ -313,46 +296,12 @@
                         [explodeSlices]="false">
                     </ngx-charts-pie-chart>
                 </div>
-            </mat-card-content>
+            </mat-card-content>-->
         </mat-card>
         </div>
     </div>
     <br>
-   <!--
-    <div class="row">
-        <div class="col-4">
-            <ngx-charts-bar-vertical 
-              [results]="barData"
-              [xAxis]="true"
-              [yAxis]="true"
-              [legend]="false"
-              [showDataLabel]="true">
-              [scheme]="{ domain: ['#5AA454', '#A10A28', '#C7B42C'] }">
-            </ngx-charts-bar-vertical>
-        </div>
-        <div class="col-4">
-            <ngx-charts-line-chart
-              [results]="lineData"
-              [xAxis]="true"
-              [yAxis]="true"
-              [legend]="true"
-              [showXAxisLabel]="true"  
-              [showYAxisLabel]="true"
-              [autoScale]="true">
-            </ngx-charts-line-chart>
-        </div>
-        <div class="col-4">
-            <ngx-charts-pie-chart
-              [results]="pieData"
-              [legend]="true"
-              [explodeSlices]="false"
-              [labels]="true">
-            </ngx-charts-pie-chart>
-        </div>
-    </div>
-    <br>
-    --> 
-    
+   
     <div class="row">
         <div class="col-12"></div>
     </div>

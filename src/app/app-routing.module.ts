@@ -27,6 +27,18 @@ const routes: Routes = [
   {
     path: 'finance',
     loadChildren: () => import('./modules/finance/finance.module').then(m => m.FinanceModule)
+  },  
+  {
+    path: 'project',
+    loadChildren: () => import('./modules/project/project.module').then(m => m.ProjectModule)
+  },
+  {
+    path: 'hr',
+    loadChildren: () => import('./modules/hr/hr.module').then(m => m.HrModule)
+  },
+  {
+    path: 'SERVICE',
+    loadChildren: () => import('./modules/services/services.module').then(m => m.ServicesModule)
   },
   {
     path: 'payables',

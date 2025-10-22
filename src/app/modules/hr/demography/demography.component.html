@@ -1,0 +1,64 @@
+<div class="container-fluid">
+    <div class="row no-gutters">
+        <div class="visualization-heading col-12">
+            <div class="heading-info">
+                <div class="row">
+                    <div class="col">                
+                        <h3 class="heading-title">Employee Demographics</h3>
+                    </div>
+                    <div class="col-1">
+                        <div class="row">
+                            <div class="col">
+                                <button class="btn-info text-white btn btn-block btn-sm"  title="Print Employee Demographics" style="float: right" (click)="exportEmployeeDemographics()">
+                                    <mat-icon>print</mat-icon> <!--Print Customer Statement of Account-->
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <input type="text" [(ngModel)]="searchText" class="form-control" placeholder="Search Employees..." />
+                        </div>
+                        <table class="table table-hover table-responsive-xxl">
+                            <thead class="table-dark">
+                                <tr class="table-reflow">
+                                    <th>CPR</th>
+                                    <th>NAME</th>
+                                    <th>DEPARTMENT</th>
+                                    <th>DESIGNATION</th>
+                                    <th>JOIN DATE</th>
+                                    <th>STATUS</th>
+                                    <th>NATIONALITY</th>
+                                    <th>RELIGION</th>
+                                    <th>GENDER</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let emp of (empList | filterTable:searchText| slice:0:25); let i = index;">
+                                    <td>{{ emp.cpr }}</td>
+                                    <td>{{ emp.empname }}</td>
+                                    <td>{{ emp.deptds }}</td>
+                                    <td>{{ emp.designationName }}</td>
+                                    <td>{{ emp.joindt | date: "shortDate"}}</td>
+                                    <td>{{ emp.countyStatus }}</td>
+                                    <td>{{ emp.Nation }}</td>
+                                    <td>{{ emp.ReligionName }}</td>
+                                    <td>{{ emp.sexstatus }}</td>
+                                   <!--- <td>
+                                        <button class="btn btn-sm btn-secondary" (click)="goToDetailForm(proj.CardCode)" title="View Project Details">
+                                            <mat-icon>edit</mat-icon>
+                                        </button>
+                                    </td>-->
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>   
+</div>
+<br>
