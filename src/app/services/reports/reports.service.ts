@@ -24,6 +24,10 @@ export class ReportsService {
 
   getallemp() {
     return this.http.get(this.url1 + '/hr/getallemp')
+  }      
+  
+  getallemployees() {
+    return this.http.get(this.url1 + '/hr/getallemployees')
   }    
   
   getallorders() {

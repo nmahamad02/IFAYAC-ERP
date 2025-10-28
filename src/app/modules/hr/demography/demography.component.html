@@ -18,6 +18,317 @@
                 </div>
                 <hr>
                 <div class="row">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-2">    
+                        <mat-card appearance="outlined" style="background-color: #3B82F6; color: white;">
+                            <mat-card-header>
+                                <mat-card-title align="start">                    
+                                    <i class="bi bi-people-fill"></i>
+                                    {{ activeStatusData[1].value }}
+                                </mat-card-title>
+                                <mat-card-subtitle>Employees</mat-card-subtitle>
+                            </mat-card-header>
+                            <br>
+                        </mat-card>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                        <mat-card appearance="outlined" style="background-color: #10B981; color: white;">
+                            <mat-card-header>
+                                <mat-card-title align="start">                    
+                                    <i class="bi bi-truck-front-fill"></i>
+                                    {{ departmentData.length }}
+                                </mat-card-title>
+                                <mat-card-subtitle>Departments</mat-card-subtitle>
+                            </mat-card-header>
+                            <br>
+                        </mat-card>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                        <mat-card appearance="outlined" style="background-color: #F59E0B;color: white; ">
+                            <mat-card-header>
+                                <mat-card-title align="start">                    
+                                    <i class="bi bi-building-gear"></i>
+                                    {{ nationalityData.length }}
+                                </mat-card-title>
+                                <mat-card-subtitle>Nationalities</mat-card-subtitle>
+                            </mat-card-header>
+                            <br>
+                        </mat-card>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                        <mat-card appearance="outlined" style="background-color:#6366F1; color: white;">
+                            <mat-card-header>
+                                <mat-card-title align="start">                    
+                                    <i class="bi bi-file-person-fill"></i>    
+                                    {{ designationData.length }}
+                                </mat-card-title>
+                                <mat-card-subtitle>Positions</mat-card-subtitle>
+                            </mat-card-header>
+                            <br>
+                        </mat-card>
+                    </div>    
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                        <mat-card appearance="outlined" style="background-color:#06B6D4; color: white;">
+                            <mat-card-header>
+                                <mat-card-title align="start">                    
+                                    <i class="bi bi-backpack-fill"></i>
+                                    {{ avgTenure }} Years
+                                </mat-card-title>
+                                <mat-card-subtitle>Average Tenure</mat-card-subtitle>
+                            </mat-card-header>
+                            <br>
+                        </mat-card>
+                    </div>   
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                        <mat-card appearance="outlined" style="background-color:#EF4444; color: white;">
+                            <mat-card-header>
+                                <mat-card-title align="start">                    
+                                    <i class="bi bi-tools"></i>
+                                    {{ avgAge }} Years
+                                </mat-card-title>
+                                <mat-card-subtitle>Average Age</mat-card-subtitle>
+                            </mat-card-header>
+                            <br>
+                        </mat-card>
+                    </div>     
+                </div>
+                <br>
+
+                <div *ngIf="ready">
+                    <!-- all your ngx-charts code -->
+                    <div class="row">
+                        <div class="col-12 col-md-8">
+                            <mat-card appearance="outlined" style="height: 100%;">
+                                <mat-card-header>
+                                    <mat-card-subtitle>Employee Count by Department</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <ngx-charts-bar-vertical
+                                    [results]="departmentData"
+                                    [xAxis]="true"
+                                    [yAxis]="true"
+                                    [showDataLabel]="true"
+                                    [roundEdges]="false"
+                                    style="display:block; width:90%; height:{{ chartHeight }}px;">
+                                    </ngx-charts-bar-vertical>
+                                </mat-card-content>
+                            </mat-card>  
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <mat-card appearance="outlined">
+                                <mat-card-header>
+                                    <mat-card-subtitle>Upcoming Birthdays (Next 7 Days)</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <table class="table table-striped table-sm mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Department</th>
+                                                <th>Birthday</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let emp of upcomingBirthdays">
+                                                <td>{{ emp.empname }}</td>
+                                                <td>{{ emp.Deptds }}</td>
+                                                <td>{{ emp.dateofbirth | date:'mediumDate' }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-12">
+                            <mat-card appearance="outlined">
+                                <mat-card-header>
+                                    <mat-card-subtitle>Join & Attrition Trend</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <ngx-charts-line-chart
+                                    [results]="joinAttritionTrendData"
+                                    [xAxis]="true"
+                                    [yAxis]="true"
+                                    [legend]="true"
+                                    [showGridLines]="true"
+                                    [autoScale]="true"
+                                    [timeline]="true"
+                                    style="display:block; width:90%; height:{{ chartHeight }}px;">
+                                    </ngx-charts-line-chart>
+                                </mat-card-content>
+                            </mat-card>  
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-12">
+                            <mat-card appearance="outlined" style="height: 100%;">
+                                <mat-card-header>
+                                    <mat-card-subtitle>Nationalities Breakdown</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <ngx-charts-pie-chart
+                                    [results]="nationalityData"
+                                    [legend]="true"
+                                    [labels]="true"
+                                    [doughnut]="false"
+                                    [gradient]="false"
+                                    style="display:block; width:90%; height:{{ chartHeight }}px;">
+                                </ngx-charts-pie-chart>
+                                </mat-card-content>
+                            </mat-card>  
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3">    
+                            <mat-card appearance="outlined" style="background-color: #EF4444; color: white;">
+                                <mat-card-header>
+                                    <mat-card-title align="start">                    
+                                        <i class="bi bi-people-fill"></i>
+                                        {{ deptOldest?.name }} ({{ deptOldest?.value }} years)
+                                    </mat-card-title>
+                                    <mat-card-subtitle>Longest Average Tenure</mat-card-subtitle>
+                                </mat-card-header>
+                                <br>
+                            </mat-card>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3">    
+                            <mat-card appearance="outlined" style="background-color: #6366F1; color: white;">
+                                <mat-card-header>
+                                    <mat-card-title align="start">                    
+                                        <i class="bi bi-people-fill"></i>
+                                        {{ deptYoungest?.name }} ({{ deptYoungest?.value }} years)
+                                    </mat-card-title>
+                                    <mat-card-subtitle>Youngest Average Age</mat-card-subtitle>
+                                </mat-card-header>
+                                <br>
+                            </mat-card>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3">    
+                            <mat-card appearance="outlined" style="background-color: #F59E0B; color: white;">
+                                <mat-card-header>
+                                    <mat-card-title align="start">                    
+                                        <i class="bi bi-people-fill"></i>
+                                        {{ maxDept?.name }} ({{ maxDept?.value }})
+                                    </mat-card-title>
+                                    <br>
+                                    <mat-card-subtitle>Largest Department</mat-card-subtitle>
+                                </mat-card-header>
+                                <br>
+                            </mat-card>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3">    
+                            <mat-card appearance="outlined" style="background-color: #10B981; color: white;">
+                                <mat-card-header>
+                                    <mat-card-title align="start">                    
+                                        <i class="bi bi-people-fill"></i>
+                                        {{ minDept?.name }} ({{ minDept?.value }})
+                                    </mat-card-title>
+                                    <br>
+                                    <mat-card-subtitle>Smallest Department</mat-card-subtitle>
+                                </mat-card-header>
+                                <br>
+                            </mat-card>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-12 col-md-4">
+                            <mat-card appearance="outlined">
+                                <mat-card-header>
+                                    <mat-card-subtitle>Upcoming Work Anniversaries (Next 7 Days)</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <table class="table table-striped table-sm mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Department</th>
+                                                <th>Join Date</th>
+                                                <th>Years</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let emp of upcomingAnniversaries">
+                                                <td>{{ emp.empname }}</td>
+                                                <td>{{ emp.Deptds }}</td>
+                                                <td>{{ emp.joindt | date:'mediumDate' }}</td>
+                                                <td>{{ emp.years }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <mat-card appearance="outlined">
+                                <mat-card-header>
+                                    <mat-card-subtitle>Average Tenure by Department</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <ngx-charts-bar-vertical
+                                    [results]="avgTenureByDept"
+                                    [xAxis]="true"
+                                    [yAxis]="true"
+                                    [showDataLabel]="true"
+                                    [roundEdges]="false"
+                                    style="display:block; width:90%; height:{{ chartHeight }}px;">
+                                    </ngx-charts-bar-vertical>
+                                </mat-card-content>
+                            </mat-card>  
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <mat-card appearance="outlined">
+                                <mat-card-header>
+                                    <mat-card-subtitle>Age Distribution</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                     <ngx-charts-line-chart
+                                     [results]="ageDistributionData"
+                                     [xAxis]="true"
+                                     [yAxis]="true"
+                                     [showXAxisLabel]="true"
+                                     [showYAxisLabel]="true"
+                                     [xAxisLabel]="'Age'"
+                                     [yAxisLabel]="'Number of Employees'"
+                                     [curve]="'basis'"   
+                                     style="display:block; width:90%; height:{{ chartHeight }}px;">
+                                    </ngx-charts-line-chart>
+                                </mat-card-content>
+                            </mat-card>  
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <mat-card appearance="outlined">  
+                                <mat-card-header>
+                                    <mat-card-subtitle>Age vs Designation</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <ngx-charts-bubble-chart
+                                    [results]="ageVsDesignationData.series"
+                                    [xAxis]="true"
+                                    [yAxis]="true"
+                                    [showXAxisLabel]="true"
+                                    [showYAxisLabel]="true"
+                                    [xAxisLabel]="'Age'"
+                                    [yAxisLabel]="'Designation Level'"
+                                    style="width:90%; height:{{ chartHeight }}px;">
+                                    </ngx-charts-bubble-chart>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                    <br>
+
+                </div>
+
+
+                <div class="row">
                     <div class="col-12">
                         <div class="mb-3">
                             <input type="text" [(ngModel)]="searchText" class="form-control" placeholder="Search Employees..." />
@@ -32,21 +343,17 @@
                                     <th>JOIN DATE</th>
                                     <th>STATUS</th>
                                     <th>NATIONALITY</th>
-                                    <th>RELIGION</th>
-                                    <th>GENDER</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let emp of (empList | filterTable:searchText| slice:0:25); let i = index;">
                                     <td>{{ emp.cpr }}</td>
                                     <td>{{ emp.empname }}</td>
-                                    <td>{{ emp.deptds }}</td>
-                                    <td>{{ emp.designationName }}</td>
+                                    <td>{{ emp.Deptds }}</td>
+                                    <td>{{ emp.DesignationDs }}</td>
                                     <td>{{ emp.joindt | date: "shortDate"}}</td>
-                                    <td>{{ emp.countyStatus }}</td>
+                                    <td>{{ emp.EmpStatus }}</td>
                                     <td>{{ emp.Nation }}</td>
-                                    <td>{{ emp.ReligionName }}</td>
-                                    <td>{{ emp.sexstatus }}</td>
                                    <!--- <td>
                                         <button class="btn btn-sm btn-secondary" (click)="goToDetailForm(proj.CardCode)" title="View Project Details">
                                             <mat-icon>edit</mat-icon>

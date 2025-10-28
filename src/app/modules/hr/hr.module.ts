@@ -21,6 +21,7 @@ import { MatTreeModule } from '@angular/material/tree';
 import { RouterModule } from '@angular/router';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { SharedModule } from '../shared/shared.module';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 export const hrRoutes = [
   {
@@ -36,6 +37,7 @@ export const hrRoutes = [
   imports: [
     CommonModule,
     MatIconModule,
+    NgxChartsModule,
     SharedModule,
     MatTabsModule,
     MatFormFieldModule,
