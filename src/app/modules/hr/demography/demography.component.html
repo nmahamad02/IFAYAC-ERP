@@ -94,8 +94,7 @@
                 <br>
 
                 <div *ngIf="ready">
-                    <!-- all your ngx-charts code -->
-                    <div class="row">
+                    <div class="row d-flex align-items-stretch">
                         <div class="col-12 col-md-8">
                             <mat-card appearance="outlined" style="height: 100%;">
                                 <mat-card-header>
@@ -116,7 +115,7 @@
                         <div class="col-12 col-md-4">
                             <mat-card appearance="outlined">
                                 <mat-card-header>
-                                    <mat-card-subtitle>Upcoming Birthdays (Next 7 Days)</mat-card-subtitle>
+                                    <mat-card-subtitle>Upcoming Birthdays (Next 15 Days)</mat-card-subtitle>
                                 </mat-card-header>
                                 <mat-card-content>
                                     <table class="table table-striped table-sm mb-0">
@@ -182,6 +181,43 @@
                         </div>
                     </div>
                     <br>
+                     <div class="row">
+                        <div class="col-4">
+                            <mat-card appearance="outlined" style="height: 100%;">
+                                <mat-card-header>
+                                    <mat-card-subtitle>Gender Breakdown</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <ngx-charts-pie-chart
+                                    [results]="genderData"
+                                    [legend]="false"
+                                    [labels]="true"
+                                    [doughnut]="false"
+                                    [gradient]="false"
+                                    style="display:block; width:90%; height:{{ chartHeight }}px;">
+                                </ngx-charts-pie-chart>
+                                </mat-card-content>
+                            </mat-card>  
+                        </div>
+                         <div class="col-4">
+                            <mat-card appearance="outlined" style="height: 100%;">
+                                <mat-card-header>
+                                    <mat-card-subtitle>Religious Breakdown</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <ngx-charts-pie-chart
+                                    [results]="religionData"
+                                    [legend]="false"
+                                    [labels]="true"
+                                    [doughnut]="false"
+                                    [gradient]="false"
+                                    style="display:block; width:90%; height:{{ chartHeight }}px;">
+                                </ngx-charts-pie-chart>
+                                </mat-card-content>
+                            </mat-card>  
+                        </div>
+                    </div>
+                    <br>
                     <div class="row">
                         <div class="col-12 col-sm-6 col-md-4 col-lg-3">    
                             <mat-card appearance="outlined" style="background-color: #EF4444; color: white;">
@@ -235,11 +271,11 @@
                         </div>
                     </div>
                     <br>
-                    <div class="row">
+                    <div class="row d-flex align-items-stretch">
                         <div class="col-12 col-md-4">
                             <mat-card appearance="outlined">
                                 <mat-card-header>
-                                    <mat-card-subtitle>Upcoming Work Anniversaries (Next 7 Days)</mat-card-subtitle>
+                                    <mat-card-subtitle>Upcoming Work Anniversaries (Next 15 Days)</mat-card-subtitle>
                                 </mat-card-header>
                                 <mat-card-content>
                                     <table class="table table-striped table-sm mb-0">
@@ -297,30 +333,10 @@
                                      [showYAxisLabel]="true"
                                      [xAxisLabel]="'Age'"
                                      [yAxisLabel]="'Number of Employees'"
-                                     [curve]="'basis'"   
                                      style="display:block; width:90%; height:{{ chartHeight }}px;">
                                     </ngx-charts-line-chart>
                                 </mat-card-content>
                             </mat-card>  
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <mat-card appearance="outlined">  
-                                <mat-card-header>
-                                    <mat-card-subtitle>Age vs Designation</mat-card-subtitle>
-                                </mat-card-header>
-                                <mat-card-content>
-                                    <ngx-charts-bubble-chart
-                                    [results]="ageVsDesignationData.series"
-                                    [xAxis]="true"
-                                    [yAxis]="true"
-                                    [showXAxisLabel]="true"
-                                    [showYAxisLabel]="true"
-                                    [xAxisLabel]="'Age'"
-                                    [yAxisLabel]="'Designation Level'"
-                                    style="width:90%; height:{{ chartHeight }}px;">
-                                    </ngx-charts-bubble-chart>
-                                </mat-card-content>
-                            </mat-card>
                         </div>
                     </div>
                     <br>
@@ -343,6 +359,7 @@
                                     <th>JOIN DATE</th>
                                     <th>STATUS</th>
                                     <th>NATIONALITY</th>
+                                    <th>REPORT TO</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -354,6 +371,7 @@
                                     <td>{{ emp.joindt | date: "shortDate"}}</td>
                                     <td>{{ emp.EmpStatus }}</td>
                                     <td>{{ emp.Nation }}</td>
+                                    <td>{{ emp.reporttoname }}</td>
                                    <!--- <td>
                                         <button class="btn btn-sm btn-secondary" (click)="goToDetailForm(proj.CardCode)" title="View Project Details">
                                             <mat-icon>edit</mat-icon>

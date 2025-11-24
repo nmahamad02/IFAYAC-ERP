@@ -22,6 +22,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { SharedModule } from '../shared/shared.module';
 import { ReportsComponent } from './reports-component/reports/reports.component';
+import { OrderAnalysisComponent } from './order-analysis/order-analysis.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 export const receivablesRoutes = [
   {
@@ -31,16 +33,22 @@ export const receivablesRoutes = [
   {
     path: 'Financial-Reports',
     component: ReportsComponent
+  },
+    {
+    path: 'order-analysis',
+    component: OrderAnalysisComponent
   }
 ];
 
 @NgModule({
   declarations: [
     CustomerDetailComponent,
-    ReportsComponent
+    ReportsComponent,
+    OrderAnalysisComponent
   ],
   imports: [
     MatIconModule,
+    NgxChartsModule,
     CommonModule,
     SharedModule,
     MatTabsModule,

@@ -24,6 +24,8 @@ export class DemographyComponent {
   departmentData: any[] = [];
   designationData: any[] = [];
   nationalityData: any[] = [];
+  genderData: any[] = [];
+  religionData: any[] = [];
 
   // Chart options
   showLegend = true;
@@ -83,7 +85,7 @@ async loadData() {
 
   prepareCharts() {
     // ✅ 1️⃣ Active vs Inactive — whole dataset
-    const activeCount = this.empList.filter(e => e.EmpStatus?.toLowerCase() === 'active').length;
+    const activeCount = this.empList.filter(e => e.Active === true).length;
     const inactiveCount = this.empList.length - activeCount;
     this.activeStatusData = [
       { name: 'Active', value: activeCount },
@@ -91,7 +93,7 @@ async loadData() {
     ];
 
     // 🔍 Now focus only on active employees for other charts
-    const activeEmployees = this.empList.filter(e => e.EmpStatus?.toLowerCase() === 'active');
+    const activeEmployees = this.empList.filter(e => e.Active === true);
 
 this.longestServing = activeEmployees.reduce((a, b) => {
   const joinA = new Date(a.joindt).getTime();
@@ -104,17 +106,22 @@ this.longestServing = activeEmployees.reduce((a, b) => {
     // ✅ 2️⃣ Count by Department (active only)
     const byDept = this.groupCount(activeEmployees, 'Deptds');
     this.departmentData = this.formatGroup(byDept);
-    console.log('Department Data:', this.departmentData);
 
     // ✅ 3️⃣ Count by Designation Level (active only)
     const byDesig = this.groupCount(activeEmployees, 'DesignationDs');
     this.designationData = this.formatGroup(byDesig);
-    console.log('Designation Data:', this.designationData);
 
     // ✅ 4️⃣ Nationalities Breakdown (active only)
     const byNationality = this.groupCount(activeEmployees, 'Nation');
     this.nationalityData = this.formatGroup(byNationality);
-    console.log('Nationality Data:', this.nationalityData);
+
+    // ✅ 4️⃣ Gender Breakdown (active only)
+    const byGender = this.groupCount(activeEmployees, 'gender');
+    this.genderData = this.formatGroup(byGender);
+
+    // ✅ 4️⃣ Religion Breakdown (active only)
+    const byReligion = this.groupCount(activeEmployees, 'religionname');
+    this.religionData = this.formatGroup(byReligion);
 
   
     // 2️⃣ Average Tenure (years since join date)
@@ -139,11 +146,9 @@ this.joinTrendData = [
     series: this.formatGroup(hiresByYear)
   }
 ];
-  console.log(this.joinTrendData )
   // 6️⃣ Attrition Trend (inactive employees per month)
   const inactiveEmployees = this.empList.filter(e => e.Active === false);
   const attritionByYear = this.groupByDate(inactiveEmployees, 'discontinuedDt', 'year');
-    console.log(attritionByYear )
 
 this.attritionTrendData = [
   {
@@ -234,7 +239,7 @@ this.ageVsDesignationData = {
 
 
 const today = new Date();
-const upcomingDays = 7;
+const upcomingDays = 15;
 this.upcomingBirthdays = activeEmployees
   .filter(e => e.dateofbirth)
   .filter(e => {
