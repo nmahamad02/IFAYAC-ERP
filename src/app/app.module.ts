@@ -21,6 +21,7 @@ import { AbsPipe } from './pipes/abs.pipe';
 import { MatTabsModule } from '@angular/material/tabs';
 
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { DecimalToTimePipe } from './pipes/decimal-to-time.pipe';
 
 // Factory function for the translation loader
 export function HttpLoaderFactory(http: HttpClient) {
@@ -31,6 +32,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   declarations: [
     AppComponent,
     DashboardComponent,
+    //DecimalToTimePipe,
     //AbsPipe
 
   ],

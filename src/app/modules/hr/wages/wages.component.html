@@ -1,0 +1,187 @@
+<div class="container-fluid">
+    <div class="row no-gutters">
+        <div class="visualization-heading col-12">
+            <div class="heading-info">
+                <div class="row">
+                    <div class="col">                
+                        <h3 class="heading-title">Time & Wagesheet Allocation</h3>
+                    </div>
+                    <div class="col-1">
+                        <div class="row">
+                            <div class="col">
+                                <button class="btn-info text-white btn btn-block btn-sm" style="float: right" (click)="printReport()">
+                                    <mat-icon>print</mat-icon> 
+                                </button>
+                            </div>
+                            <div class="col">
+                                <!-- <button class="btn-info text-white btn btn-block btn-sm"  title="Print Customer Statement of Account" style="float: right" (click)="getCustomerSoa()">
+                                    <mat-icon>print</mat-icon> 
+                                </button> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-4">
+                                <input type="text" matInput class="form-control form-control-sm" [formControl]="employeeCtrl" [matAutocomplete]="autoAirline" placeholder="Select employees...">
+                                <mat-autocomplete #autoAirline="matAutocomplete" (optionSelected)="onEmployeeSelected($event)">
+                                    <mat-option *ngFor="let option of filteredEmployees$ | async" [value]="option.empcd"> 
+                                        {{ option.empcd }} | {{ option.empname }}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </div>
+                            <div class="col-5">
+                                <input type="text" matInput class="form-control form-control-sm" [formControl]="employeeName" readonly>
+                            </div>
+                            <div class="col-3">
+                                <input type="month" class="form-control form-control-sm" [(ngModel)]="startDate" placeholder="Start Date">
+                            </div>
+                        </div>        
+                    </div>
+                    <div class="col-1">
+                        <button class="btn btn-sm btn-primary"  (click)="onFilter()"> Filter</button>
+                    </div>
+                </div> 
+
+                <div class="row" [formGroup]="attendanceForm">
+                    <!-- LEFT: Attendance Records -->
+                    <div class="col-6">
+                        <table class="table table-sm mt-3">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Day</th>
+                                    <th>Check In</th>
+                                    <th>Check Out</th>
+                                    <th>Hours</th>
+                                    <th>Status</th>
+                                    <th>Project</th>
+                                    <th>SO No</th>
+                                    <!--<th></th>-->
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="records">
+                                <tr *ngFor="let row of records.controls; let i = index" [formGroupName]="i"  (click)="getBreakDown(i)">
+                                    <td>{{ row.get('date')?.value | date:'dd' }}</td>
+                                    <td>{{ row.get('day')?.value }}</td>
+                                    <td>{{ row.get('checkin')?.value | date:'HH:mm' }}</td>
+                                    <td>{{ row.get('checkout')?.value | date:'HH:mm' }}</td>
+                                    <td>{{ row.get('hours')?.value | decimalToTime }}</td>
+                                    <td>{{ row.get('status')?.value }}</td>
+                                    <td>{{ row.get('project')?.value }}</td>
+                                    <td>{{ row.get('sono')?.value }}</td>
+                                    <!--<td>
+                                        <button type="button" class="btn btn-info btn-sm"  (click)="getBreakDown(i)">
+                                            <mat-icon>arrow_forward</mat-icon>
+                                        </button>
+                                    </td>-->
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- RIGHT: Wage Breakdown -->
+                    <div class="col-6" *ngIf="selectedIndex !== null" [formGroup]="getRecordGroup(selectedIndex)">
+                        <h4>
+                            Wage Breakdown –
+                            {{ records.at(selectedIndex).get('date')?.value | date:'dd-MM-yyyy' }}
+                        </h4>
+                        <table class="table table-bordered table-sm">
+                            <thead class="table-secondary">
+                                <tr>
+                                    <th>Project</th>
+                                    <th>SO No</th>
+                                    <th style="width:10%">NOR</th>
+                                    <th style="width:10%">NOTT</th>
+                                    <th style="width:10%">HOTT</th>
+                                    <th style="width:10%">SOTT</th>
+                                    <th style="width:10%">Break</th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="wageBreakdown">
+                                <tr *ngFor="let wb of getWageBreakdown(selectedIndex).controls; let j = index" [formGroupName]="j">
+                                    <td><input class="form-control form-control-sm" formControlName="jobNo" (keydown.f2)="openJobLookup(j)"></td>
+                                    <td><input class="form-control form-control-sm" formControlName="soNo" (keydown.f2)="openJobLookup(j)"></td>
+                                    <td><input type="number" min="0" class="form-control form-control-sm" formControlName="nor"></td>
+                                    <td><input type="number" min="0" class="form-control form-control-sm" formControlName="nott"></td>
+                                    <td><input type="number" min="0" class="form-control form-control-sm" formControlName="hott"></td>
+                                    <td><input type="number" min="0" class="form-control form-control-sm" formControlName="sott"></td>
+                                    <td><input type="number" min="0" class="form-control form-control-sm" formControlName="breakT"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="mt-2 d-flex gap-2">
+                            <button type="button" class="btn btn-warning btn-sm" (click)="addBreakdown(selectedIndex)">
+                                <mat-icon>add</mat-icon>
+                            </button>
+                            <button type="button" class="btn btn-success btn-sm" (click)="submitBreakdown(selectedIndex)">
+                                <mat-icon>check</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>   
+</div>
+<br>
+
+<ng-template #josSearchLookupDialogue>
+    <h3 matDialogTitle>
+        <b>Job Search</b>
+    </h3>
+     
+    <div mat-dialog-content style="font-size: small;">      
+        <div class="col-12">
+            <input id="jobSearchInput" #jobSearchInput type="text" class="form-control form-control-sm" placeholder="Search for project or job" (keyup)="searchJob(jobSearchInput.value)">
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-6">
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm table-bordered table-responsive">
+                        <thead class="table-dark" style="position: sticky; top: 0; z-index: 10;">
+                            <tr>
+                                <th><small>Project</small></th>
+                                <th><small>Name</small></th>
+                                <th><small>Date</small></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let row of jobList ; let i = index" [class.table-active]="i === selectedJobIndex" (click)="selectJob(row)">
+                                <td><small>{{ row.PrjCode }}</small></td>
+                                <td><small>{{ row.PrjName }}</small></td>
+                                <td><small>{{ row.ValidFrom | date:'dd-MM-yyyy' }}</small></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm table-bordered table-responsive">
+                        <thead class="table-dark" style="position: sticky; top: 0; z-index: 10;">
+                            <tr>
+                                <th><small>SO NO</small></th>
+                                <th><small>Project</small></th>
+                                <th><small>Customer</small></th>
+                                <th><small>Date</small></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let row of soList ; let i = index" [class.table-active]="i === selectedJobIndex" (click)="selectSo(row)">
+                                <td><small>{{ row["Series-DocNum"] }}</small></td>
+                                <td><small>{{ row.Project }}</small></td>
+                                <td><small>{{ row.CardCode }}</small></td>
+                                <td><small>{{ row.DocDate | date:'dd-MM-yyyy' }}</small></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+</ng-template>

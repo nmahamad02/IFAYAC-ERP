@@ -78,9 +78,18 @@ export class ReportsService {
     return this.http.get(this.url1 + '/hana/getAllJobs/'  + busiCent + '/' + year + '/' + prjcode)
   }  
 
+  getAllJobsO() {
+    return this.http.get(this.url1 + '/hana/getAllJobsO')
+  }  
 
+  getTop15so(search: string) {
+    return this.http.get(this.url1 + '/hana/getTop15so/' + search)
+  }  
 
-  
+  gettop15jobs(search: string) {
+    return this.http.get(this.url1 + '/hana/gettop15jobs/' + search)
+  } 
+
   getProductList() {
     return this.http.get(this.url2 + '/report/get-product-list')
   } 

@@ -115,7 +115,7 @@
                         <div class="col-12 col-md-4">
                             <mat-card appearance="outlined">
                                 <mat-card-header>
-                                    <mat-card-subtitle>Upcoming Birthdays (Next 15 Days)</mat-card-subtitle>
+                                    <mat-card-subtitle>Upcoming Birthdays (Next 30 Days)</mat-card-subtitle>
                                 </mat-card-header>
                                 <mat-card-content>
                                     <table class="table table-striped table-sm mb-0">
@@ -127,13 +127,15 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr *ngFor="let emp of upcomingBirthdays">
+                                            <tr *ngFor="let emp of pagedBirthdays">
                                                 <td>{{ emp.empname }}</td>
                                                 <td>{{ emp.Deptds }}</td>
                                                 <td>{{ emp.dateofbirth | date:'mediumDate' }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
+
+                                    <mat-paginator  #birthdayPaginator  [pageSize]="5"    [length]="upcomingBirthdays.data.length" [pageSizeOptions]="[5]"></mat-paginator>
                                 </mat-card-content>
                             </mat-card>
                         </div>
@@ -275,7 +277,7 @@
                         <div class="col-12 col-md-4">
                             <mat-card appearance="outlined">
                                 <mat-card-header>
-                                    <mat-card-subtitle>Upcoming Work Anniversaries (Next 15 Days)</mat-card-subtitle>
+                                    <mat-card-subtitle>Upcoming Work Anniversaries (Next 30 Days)</mat-card-subtitle>
                                 </mat-card-header>
                                 <mat-card-content>
                                     <table class="table table-striped table-sm mb-0">
@@ -288,7 +290,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr *ngFor="let emp of upcomingAnniversaries">
+                                            <tr *ngFor="let emp of pagesAnniversaries">
                                                 <td>{{ emp.empname }}</td>
                                                 <td>{{ emp.Deptds }}</td>
                                                 <td>{{ emp.joindt | date:'mediumDate' }}</td>
@@ -296,6 +298,8 @@
                                             </tr>
                                         </tbody>
                                     </table>
+
+                                    <mat-paginator  #anniversaryPaginator  [pageSize]="5"    [length]="upcomingAnniversaries.data.length" [pageSizeOptions]="[5]"></mat-paginator>
                                 </mat-card-content>
                             </mat-card>
                         </div>

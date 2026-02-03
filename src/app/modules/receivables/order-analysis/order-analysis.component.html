@@ -49,7 +49,7 @@
                                     <i class="bi bi-building-gear"></i>
                                     {{ stats.remarks }}
                                 </mat-card-title>
-                                <mat-card-subtitle>Order Categories</mat-card-subtitle>
+                                <mat-card-subtitle>Business Centres</mat-card-subtitle>
                             </mat-card-header>
                             <br>
                         </mat-card>
@@ -61,7 +61,7 @@
                                     <i class="bi bi-cash-stack"></i>    
                                     <small>{{ stats.revenueThisYear | number:'1.0-3' }}</small>
                                 </mat-card-title>
-                                <mat-card-subtitle>Revenue This Year</mat-card-subtitle>
+                                <mat-card-subtitle>Orders Booked This Year</mat-card-subtitle>
                             </mat-card-header>
                             <br>
                         </mat-card>
@@ -77,25 +77,17 @@
                             </mat-card-header>
                             <br>
                         </mat-card>
-                    </div>   
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                    </div>  
+                     <div class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <mat-card appearance="outlined" style="background-color:#EF4444; color: white;">
                             <mat-card-header>
-                                <!--<mat-card-title align="start">                    
-                                    <i class="bi bi-people-fill"></i>
-                                    {{ stats.salespeople }}
-                                </mat-card-title>
-                                <mat-card-subtitle>Salespeople</mat-card-subtitle>-->
                                 <mat-card-title align="start" style="display: flex; align-items: center; gap: 8px;">                    
                                     <div style="flex: 1;">
                                         <mat-select [(value)]="cYear" (selectionChange)="onYearChange()" disableRipple style="width: 100%; padding: 0; margin: 0; color: white;">
                                             <mat-option *ngFor="let y of availableYears"  [value]="y">{{ y }}</mat-option>
                                         </mat-select>
                                     </div>
-                                </mat-card-title>
-                                <!--<select id="yearSelect" class="form-select" [(ngModel)]="cYear" (change)="onYearChange()">
-                                    <option *ngFor="let y of availableYears" [value]="y">{{ y }}</option>
-                                </select>-->
+                                </mat-card-title>                             
                                 <mat-card-subtitle>Select Year</mat-card-subtitle>
                             </mat-card-header>
                             <br>
@@ -108,20 +100,21 @@
                     <div class="col-12">
                         <mat-card appearance="outlined">
                             <mat-card-header>
-                                <mat-card-subtitle>Monthwise Revenue Analysis</mat-card-subtitle>
+                                <mat-card-subtitle>Monthwise Booking Analysis</mat-card-subtitle>
                             </mat-card-header>
                             <mat-card-content>
                                 <ngx-charts-line-chart
-                                [results]="yearwiseComparisonChart"
-                                [xAxis]="true"
-                                [yAxis]="true"
-                                [legend]="true"
-                                [autoScale]="true">
+                                    [results]="yearwiseComparisonChart"
+                                    [xAxis]="true"
+                                    [yAxis]="true"
+                                    [legend]="true"
+                                    [autoScale]="true">
                                 </ngx-charts-line-chart>
                             </mat-card-content>
                         </mat-card>
                     </div>
                 </div>
+                <br>
                 <div class="row" *ngIf="ready">
                     <!-- Monthly SO Trend -->
                     <div class="col-md-6">
@@ -137,50 +130,8 @@
                                 </ngx-charts-line-chart>
                             </mat-card-content>
                         </mat-card>
-                    </div>
+                    </div>  
                     <div class="col-md-6">
-                       <mat-card appearance="outlined">
-                            <mat-card-header>
-                                <mat-card-subtitle>Salesperson Performance</mat-card-subtitle>
-                            </mat-card-header>
-                            <mat-card-content>
-                                <ngx-charts-pie-chart
-                                [results]="salespersonChart"
-                                [legend]="true"
-                                [labels]="true"
-                                [doughnut]="false"
-                                [gradient]="false">
-                                </ngx-charts-pie-chart>
-                            </mat-card-content>
-                        </mat-card>
-                    </div>
-                </div>
-                <div class="row" *ngIf="ready">
-                    <!-- Top Customers -->
-                     <div class="col-md-4">
-                        <mat-card appearance="outlined">
-                            <mat-card-header>
-                                <mat-card-subtitle>Top Customers by SO Total</mat-card-subtitle>
-                            </mat-card-header>
-                            <mat-card-content>
-                                    <table class="table table-striped table-sm mb-0" style="width: 100%;">
-                                    <thead>
-                                        <tr>
-                                            <th>Customer</th>
-                                            <th>Total (SO)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let c of topCustomers">
-                                            <td>{{ c.name }}</td>
-                                            <td>{{ c.total | number:'1.0-0' }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </mat-card-content>
-                        </mat-card>
-                    </div>
-                    <div class="col-md-8">
                         <mat-card appearance="outlined">
                             <mat-card-header>
                                 <mat-card-subtitle>{{ cYear }} Order totals by remarks</mat-card-subtitle>
@@ -198,8 +149,73 @@
                                 </ngx-charts-bar-vertical>
                             </mat-card-content>
                         </mat-card>
+                    </div>          
+                </div> 
+                <br>
+                <div class="row" *ngIf="ready">
+                    <div class="col-2">
+                        <mat-card appearance="outlined" style="background-color:#A855F7; color: white;">
+                            <mat-card-header>
+                                <mat-card-title align="start">
+                                    <mat-select [(value)]="selectedRemark" (selectionChange)="onRemarkChange()">
+                                        <mat-option value="">All Business Centres</mat-option>
+                                        <mat-option *ngFor="let r of remarksList" [value]="r">{{ r }}</mat-option>
+                                    </mat-select>
+                                </mat-card-title>
+                                <mat-card-subtitle>Select Business Centre</mat-card-subtitle>
+                            </mat-card-header>
+                        </mat-card>
+                        <br>
+                        <mat-card appearance="outlined" style="background-color:#8B5CF6; color:white;">
+                            <mat-card-header>
+                                <mat-card-title align="start">
+                                    {{ customerRetention.retentionRate }}%
+                                </mat-card-title>
+                                <mat-card-subtitle>Customer Retention</mat-card-subtitle>
+                            </mat-card-header>
+                            <br>
+                        </mat-card>
                     </div>
-                </div>
+                    <div class="col-5">
+                        <mat-card appearance="outlined">
+                            <mat-card-header>
+                                <mat-card-subtitle>Top Customers by SO Total</mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                    <table class="table table-striped table-sm mb-0" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Customer</th>
+                                            <th>Total (SO)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let c of topCustomers">
+                                            <td><small>{{ c.name }}</small></td>
+                                            <td><small>{{ c.total | number:'1.0-0' }}</small></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                    <div class="col-5">
+                       <mat-card appearance="outlined">
+                            <mat-card-header>
+                                <mat-card-subtitle>Salesperson Performance</mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <ngx-charts-pie-chart
+                                    [results]="salespersonChart"
+                                    [legend]="true"
+                                    [labels]="true"
+                                    [doughnut]="false"
+                                    [gradient]="false">
+                                </ngx-charts-pie-chart>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </div>   
                 <hr>
                 <div class="row">
                     <div class="col-12">
@@ -215,25 +231,69 @@
                                     <th>CARD NAME</th>
                                     <th>SALESPERSON</th>
                                     <th>REMARKS</th>
-                                    <th>FINANCIAL PERIOD</th>
+                                    <!--<th>FINANCIAL PERIOD</th>-->
                                     <th>SO TOTAL</th>
+                                    <th>DETAILS</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let so of (soList | filterTable:searchText | slice:0:10); let i = index;">
+                                <tr *ngFor="let so of (filteredSO | filterTable:searchText | slice:(currentPage * pageSize):(currentPage * pageSize + pageSize))">
                                     <td>{{ so["SO Num"] }}</td>
                                     <td>{{ so["SO Date"] | date: "mediumDate"}}</td>
                                     <td>{{ so.CardCode }}</td>
                                     <td>{{ so.CardName }}</td>
                                     <td>{{ so.SlpCode }} - {{ so.SlpName }}</td>
                                     <td>{{ so.Remark }}</td>
-                                    <td>{{ so.Code }}</td>
+                                    <!--<td>{{ so.Code }}</td>-->
                                     <td style="align-items: end;">BHD {{ so["SO Total"] | number:'1.3-3'}}</td>
+                                    <td class="text-end">
+                                        <a class="btn btn-link p-0" [routerLink]="['/project/project-cost-analysis', so['SO Num']]">
+                                            →
+                                        </a>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
+                        <mat-paginator [length]="filteredSO.length" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50]" (page)="onPageChange($event)"></mat-paginator>
                     </div>
                 </div> 
+                                <br>
+                <div class="row" *ngIf="ready">
+                    <!---
+                    <div class="col-6">
+                        <mat-card appearance="outlined">
+                            <mat-card-header>
+                                <mat-card-subtitle>Month-on-Month Growth (%)</mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <ngx-charts-line-chart
+                                    [results]="momGrowthChart"
+                                    [xAxis]="true"
+                                    [yAxis]="true"
+                                    [autoScale]="true"
+                                    [legend]="false">
+                                </ngx-charts-line-chart>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                -->
+                    <div class="col-12">
+                        <mat-card appearance="outlined">
+                            <mat-card-header>
+                                <mat-card-subtitle>Salesperson × Business Centre (Revenue Heatmap)</mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <ngx-charts-heat-map
+                                    [results]="salespersonBCHeatmap"
+                                    [xAxis]="true"
+                                    [yAxis]="true"
+                                    [legend]="true"
+                                    [gradient]="true">
+                                </ngx-charts-heat-map>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </div>
             </div>
         </div>
     </div>   

@@ -22,23 +22,31 @@ import { RouterModule } from '@angular/router';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { SharedModule } from '../shared/shared.module';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { WagesComponent } from './wages/wages.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 export const hrRoutes = [
   {
     path: 'demography',
     component: DemographyComponent
+  }, 
+  { 
+    path: 'wages',
+    component: WagesComponent
   }
 ];
 
 @NgModule({
   declarations: [
-    DemographyComponent
+    DemographyComponent,
+    WagesComponent
   ],
   imports: [
     CommonModule,
     MatIconModule,
     NgxChartsModule,
     SharedModule,
+    MatAutocompleteModule,
     MatTabsModule,
     MatFormFieldModule,
     MatExpansionModule,

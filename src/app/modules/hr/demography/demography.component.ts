@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AccountsService } from 'src/app/services/accounts/accounts.service';
@@ -7,6 +7,8 @@ import { FinanceService } from 'src/app/services/finance/finance.service';
 import { ReportsService } from 'src/app/services/reports/reports.service';
 import { ChangeDetectorRef } from '@angular/core';
 import * as shape from 'd3-shape';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-demography',
@@ -14,6 +16,10 @@ import * as shape from 'd3-shape';
   styleUrls: ['./demography.component.scss']
 })
 export class DemographyComponent {
+    
+  @ViewChild('birthdayPaginator') birthdayPaginator!: MatPaginator;
+  @ViewChild('anniversaryPaginator') anniversaryPaginator!: MatPaginator;
+
   empList: any[] = []
   searchText = ""
   avgTenure: number | string;
@@ -49,14 +55,34 @@ chartHeight = window.innerWidth * 0.4;
 ready = false;
   longestServing: any;
   ageVsDesignationData: any
-  upcomingBirthdays: any[];
-  upcomingAnniversaries: any[];
+  upcomingBirthdays = new MatTableDataSource<any>();
+  pagedBirthdays: any[] = [];
+
+  upcomingAnniversaries= new MatTableDataSource<any>();
+  pagesAnniversaries: any[] = [];
+
   ageDistributionCurve: any;
 
 ngOnInit() {
   this.setChartSize();
   this.loadData();
 }
+
+ngAfterViewInit() {
+  if (!this.birthdayPaginator) return;
+
+  this.birthdayPaginator.page.subscribe(() => {
+    this.updatePagedBirthdays();
+  });
+
+  if (!this.anniversaryPaginator) return;
+
+  this.anniversaryPaginator.page.subscribe(() => {
+    this.updatePagedAnniversaries();
+  });
+}
+
+
 
 async loadData() {
   await this.fetchEmployees(); // or however you get empList
@@ -237,20 +263,45 @@ this.ageVsDesignationData = {
   }))
 };
 
-
+const upcomingDays = 30;
 const today = new Date();
-const upcomingDays = 15;
-this.upcomingBirthdays = activeEmployees
-  .filter(e => e.dateofbirth)
-  .filter(e => {
-    const bday = new Date(e.dateofbirth);
-    bday.setFullYear(today.getFullYear());
-    const diffDays = (bday.getTime() - today.getTime()) / (1000*60*60*24);
-    return diffDays >= 0 && diffDays <= upcomingDays;
-  })
-  .sort((a,b) => new Date(a.dateofbirth).getTime() - new Date(b.dateofbirth).getTime());
+today.setHours(0, 0, 0, 0);
 
-this.upcomingAnniversaries = activeEmployees
+this.upcomingBirthdays.data = activeEmployees
+  .filter(e => e.dateofbirth)
+  .map(e => {
+    const dob = new Date(e.dateofbirth);
+
+    // Birthday in current year
+    const nextBirthday = new Date(today.getFullYear(), dob.getMonth(), dob.getDate());
+
+    // If already passed, move to next year
+    if (nextBirthday < today) {
+      nextBirthday.setFullYear(today.getFullYear() + 1);
+    }
+
+    return {
+      ...e,
+      _nextBirthday: nextBirthday
+    };
+  })
+  .filter(e => {
+    const diffDays =
+      (e._nextBirthday.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+    return diffDays >= 0 && diffDays <= 30;
+  })
+  .sort((a, b) =>
+    a._nextBirthday.getTime() - b._nextBirthday.getTime()
+  );
+
+if (this.birthdayPaginator) {
+  this.birthdayPaginator.pageIndex = 0;
+  this.updatePagedBirthdays();
+} else {
+  this.pagedBirthdays = this.upcomingBirthdays.data.slice(0, 5);
+}
+
+this.upcomingAnniversaries.data = activeEmployees
   .filter(e => e.joindt)
   .filter(e => {
     const anniv = new Date(e.joindt);
@@ -264,6 +315,12 @@ this.upcomingAnniversaries = activeEmployees
   })
   .sort((a,b) => new Date(a.joindt).getTime() - new Date(b.joindt).getTime());
 
+if (this.anniversaryPaginator) {
+  this.anniversaryPaginator.pageIndex = 0;
+  this.updatePagedAnniversaries();
+} else {
+  this.pagesAnniversaries = this.upcomingAnniversaries.data.slice(0, 5);
+}
 
 
   // 9️⃣ Nationality Mix %
@@ -293,6 +350,18 @@ this.upcomingAnniversaries = activeEmployees
   this.setChartSize();
   this.cdr.detectChanges();
   }
+
+  updatePagedBirthdays() {
+  const startIndex = this.birthdayPaginator.pageIndex * this.birthdayPaginator.pageSize;
+  const endIndex = startIndex + this.birthdayPaginator.pageSize;
+  this.pagedBirthdays = this.upcomingBirthdays.data.slice(startIndex, endIndex);
+}
+
+  updatePagedAnniversaries() {
+  const startIndex = this.anniversaryPaginator.pageIndex * this.anniversaryPaginator.pageSize;
+  const endIndex = startIndex + this.anniversaryPaginator.pageSize;
+  this.pagesAnniversaries = this.upcomingAnniversaries.data.slice(startIndex, endIndex);
+}
 
   groupCount(array: any[], key: string) {
     return array.reduce((acc, cur) => {
@@ -337,8 +406,8 @@ setChartSize() {
   this.chartHeight = Math.floor(window.innerHeight * 0.4);
 }
 
-@HostListener('window:resize', ['$event'])
+/*@HostListener('window:resize', ['$event'])
 onResize() {
   this.setChartSize();
-}
+}*/
 }

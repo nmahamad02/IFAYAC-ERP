@@ -24,9 +24,15 @@ export class OrderAnalysisComponent {
   monthlySOAvgChart: any[] = [];
   topCustomers: any[] = [];
   yearlySOChart: any[] = [];
+ momGrowthChart: any[] = [];
 
   yearwiseComparisonChart: any[] = [];
   remarksChart: any[] = []
+customerRetention = {
+  totalCustomers: 0,
+  repeatCustomers: 0,
+  retentionRate: 0
+};
 
   stats = {
     salespeople: 0,
@@ -37,10 +43,16 @@ export class OrderAnalysisComponent {
     ordersThisMonth: 0,
   };
 
+  selectedRemark: string = "";
+  remarksList: string[] = [];
+  salespersonBCHeatmap: any[] = [];
+
   cYear = new Date().getFullYear();
 
   availableYears: number[] = [];
 
+  currentPage = 0;
+  pageSize = 10;
 
   colorScheme = {
     domain: ['#3366cc', '#dc3912', '#ff9900', '#109618', '#990099']
@@ -75,6 +87,7 @@ fetchSalesOrders() {
     this.buildRemarksChart();
     this.prepareSalespersonChart();
     this.prepareTopCustomers();
+    this.remarksList = Array.from(new Set(this.soList.map(e => e.Remark ?? "Unknown")));
     this.ready = true;
   });
 }
@@ -213,6 +226,50 @@ computeStats() {
       })) 
     } 
   ];
+
+  // ----------------------
+// Month-on-Month Growth
+// ----------------------
+const current = currentYearSeries.map(m => m.value);
+
+const mom = current.map((val, idx) => {
+  if (idx === 0) return 0; // no previous month
+  const prev = current[idx - 1] || 0;
+  if (prev === 0) return 0;
+  return ((val - prev) / prev) * 100;
+});
+
+// Build chart structure
+this.momGrowthChart = [
+  {
+    name: "MoM Growth (%)",
+    series: mom.map((g, idx) => ({
+      name: monthNames[idx],
+      value: Number(g.toFixed(2))
+    }))
+  }
+];
+
+// ----------------------
+// Customer Retention
+// ----------------------
+const custMap: Record<string, number> = {};
+this.soList.forEach(so => {
+  const cust = so.CardCode;
+  if (!cust) return;
+  custMap[cust] = (custMap[cust] || 0) + 1;
+});
+
+const totalCust = Object.keys(custMap).length;
+const repeatCust = Object.values(custMap).filter(c => c > 1).length;
+
+this.customerRetention = {
+  totalCustomers: totalCust,
+  repeatCustomers: repeatCust,
+  retentionRate: totalCust ? Number(((repeatCust / totalCust) * 100).toFixed(2)) : 0
+};
+
+
 }
 
 // --------------------------
@@ -221,13 +278,15 @@ computeStats() {
 prepareSalespersonChart() {
   if (!this.soList || this.soList.length === 0) return;
 
-  const filtered = this.soList.filter(so => new Date(so["SO Date"]).getFullYear() === this.cYear);
+  //const filtered = this.soList.filter(so => new Date(so["SO Date"]).getFullYear() === this.cYear);
+  const filtered = this.filteredSO;
   const slpGroups = this.groupCount(filtered, "SlpName");
 
   this.salespersonChart = Object.entries(slpGroups).map(([name, value]) => ({
     name,
     value
   }));
+  this.buildSalespersonBusinessCentreHeatmap();
 }
 
 // --------------------------
@@ -236,7 +295,8 @@ prepareSalespersonChart() {
 prepareTopCustomers() {
   if (!this.soList || this.soList.length === 0) return;
 
-  const filtered = this.soList.filter(so => new Date(so["SO Date"]).getFullYear() === this.cYear);
+  //const filtered = this.soList.filter(so => new Date(so["SO Date"]).getFullYear() === this.cYear);
+  const filtered = this.filteredSO;
   const custTotals: Record<string, number> = {};
 
   filtered.forEach(e => {
@@ -299,5 +359,56 @@ buildRemarksChart() {
     });
     return grouped;
   }
+
+  buildSalespersonBusinessCentreHeatmap() {
+  if (!this.soList.length) return;
+
+  const filtered = this.soList.filter(
+    so => new Date(so["SO Date"]).getFullYear() === this.cYear
+  );
+
+  // Matrix: salesperson → remark → sum of totals
+  const matrix: Record<string, Record<string, number>> = {};
+
+  filtered.forEach(so => {
+    const sp = so.SlpName || "Unknown";
+    const bc = so.Remark || "Unknown";
+    const total = parseFloat(so["SO Total"] || 0);
+
+    if (!matrix[sp]) matrix[sp] = {};
+    matrix[sp][bc] = (matrix[sp][bc] || 0) + total;
+  });
+
+  // Convert to ngx-charts format
+  this.salespersonBCHeatmap = Object.entries(matrix).map(([sp, centres]) => ({
+    name: sp,
+    series: Object.entries(centres).map(([bc, total]) => ({
+      name: bc,
+      value: total
+    }))
+  }));
+}
+
+
+  onRemarkChange() {
+    this.prepareSalespersonChart();
+    this.prepareTopCustomers();
+   // this.buildRemarksChart();
+  }
+
+  onPageChange(event: any) {
+    this.pageSize = event.pageSize;
+    this.currentPage = event.pageIndex;
+  }
+
+
+  get filteredSO() {
+    return this.soList.filter(so => {
+      const yearMatch = new Date(so["SO Date"]).getFullYear() === this.cYear;
+      const remarkMatch = !this.selectedRemark || so.Remark === this.selectedRemark;
+      return yearMatch && remarkMatch;
+    });
+  }
+
 
 }
