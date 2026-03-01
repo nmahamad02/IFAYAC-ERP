@@ -24,7 +24,7 @@
                 <div class="row">
                     <div class="col">
                         <div class="row">
-                            <div class="col-4">
+                            <div class="col-3">
                                 <input type="text" matInput class="form-control form-control-sm" [formControl]="employeeCtrl" [matAutocomplete]="autoAirline" placeholder="Select employees...">
                                 <mat-autocomplete #autoAirline="matAutocomplete" (optionSelected)="onEmployeeSelected($event)">
                                     <mat-option *ngFor="let option of filteredEmployees$ | async" [value]="option.empcd"> 
@@ -32,11 +32,14 @@
                                     </mat-option>
                                 </mat-autocomplete>
                             </div>
-                            <div class="col-5">
+                            <div class="col-3">
                                 <input type="text" matInput class="form-control form-control-sm" [formControl]="employeeName" readonly>
                             </div>
                             <div class="col-3">
-                                <input type="month" class="form-control form-control-sm" [(ngModel)]="startDate" placeholder="Start Date">
+                                <input type="date" class="form-control form-control-sm" [(ngModel)]="startDate" placeholder="Start Date">
+                            </div>
+                            <div class="col-3">
+                                <input type="date" class="form-control form-control-sm" [(ngModel)]="endDate" placeholder="End Date">
                             </div>
                         </div>        
                     </div>
@@ -64,7 +67,7 @@
                             </thead>
                             <tbody formArrayName="records">
                                 <tr *ngFor="let row of records.controls; let i = index" [formGroupName]="i"  (click)="getBreakDown(i)">
-                                    <td>{{ row.get('date')?.value | date:'dd' }}</td>
+                                    <td>{{ row.get('date')?.value | date:'dd-MM-yyyy' }}</td>
                                     <td>{{ row.get('day')?.value }}</td>
                                     <td>{{ row.get('checkin')?.value | date:'HH:mm' }}</td>
                                     <td>{{ row.get('checkout')?.value | date:'HH:mm' }}</td>
@@ -98,6 +101,7 @@
                                     <th style="width:10%">HOTT</th>
                                     <th style="width:10%">SOTT</th>
                                     <th style="width:10%">Break</th>
+                                    <th style="width:5%"></th>
                                 </tr>
                             </thead>
                             <tbody formArrayName="wageBreakdown">
@@ -109,6 +113,11 @@
                                     <td><input type="number" min="0" class="form-control form-control-sm" formControlName="hott"></td>
                                     <td><input type="number" min="0" class="form-control form-control-sm" formControlName="sott"></td>
                                     <td><input type="number" min="0" class="form-control form-control-sm" formControlName="breakT"></td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-danger btn-sm" (click)="deleteBreakdown(selectedIndex, j)">
+                                            <mat-icon>delete</mat-icon>
+                                        </button>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

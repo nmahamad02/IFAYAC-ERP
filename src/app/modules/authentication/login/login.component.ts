@@ -68,7 +68,7 @@ export class LoginComponent {
         console.log(res);
         if(data.password === res.DECRYPTED_PASSWORD) {
           this.error = "";
-          this.authenticationService.signin(res.USERCODE, res.FIRSTNAME, res.LASTNAME, res.USERID, res.SPECIAL_ADMIN_RIGHTS).subscribe((res: any) => { 
+          this.authenticationService.signin(res.USERCODE, res.FIRSTNAME, res.LASTNAME, res.USERID, res.SPECIAL_ADMIN_RIGHTS, res.EMPNO).subscribe((res: any) => { 
             this.router.navigate(['home/dashboard']).then(() => {
             // Then reload after navigation completes
             window.location.reload();

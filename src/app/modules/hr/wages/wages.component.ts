@@ -26,6 +26,7 @@ export class WagesComponent {
   mCurDate = this.formatDate(new Date())
 
   startDate: Date;
+  endDate: Date;
 
   selectedIndex: number | null = null;
 
@@ -99,20 +100,20 @@ onEmployeeSelected(event: any) {
 }
 
 onFilter() {
-  if (!this.employeeCtrl.value || !this.startDate) {
-    alert('Please select employee and month');
+  if (!this.employeeCtrl.value || !this.startDate || !this.endDate) {
+    alert('Please select employee and dates');
     return;
   }
+  console.log(this.startDate)
+  console.log(this.endDate)
 
   const empCode = this.employeeCtrl.value;
 
-  const [year, month] = this.startDate.toString().split('-');
+  //const [year, month] = this.startDate.toString().split('-');
 
-  this.hrService
-    .getEmpAttReport(empCode, month, year)
-    .subscribe((res: any) => {
-      this.buildAttendanceForm(res.recordset);
-      console.log(res.recordset)
+  this.hrService.getEmpAttReport(empCode, this.startDate.toString(), this.endDate.toString()).subscribe((res: any) => {
+          console.log(res)
+      this.buildAttendanceForm(res);
     });
 }
 
@@ -151,6 +152,7 @@ getBreakDown(index: number) {
 
   this.hrService.getEmpWageSheet(punchLinkId)
     .subscribe((res: any) => {
+      console.log(res)
       this.buildWageBreakdown(index, res.recordset);
     });
 }
@@ -160,7 +162,6 @@ buildWageBreakdown(index: number, data: any[]) {
   breakdownArray.clear();
 
   data.forEach(row => {
-
     const nor = new FormControl(row.NOR, [hourMinuteValidator]);
     const nott = new FormControl(row.NOTT, [hourMinuteValidator]);
     const hott = new FormControl(row.HOTT, [hourMinuteValidator]);
@@ -220,6 +221,19 @@ addBreakdown(index: number) {
   );
 }
 
+deleteBreakdown(recordIndex: number, breakdownIndex: number) {
+  const breakdownArray = this.getWageBreakdown(recordIndex);
+
+  if (breakdownArray.length === 1) {
+    alert('At least one wage breakdown entry is required.');
+    return;
+  }
+
+  if (confirm('Delete this wage breakdown row?')) {
+    breakdownArray.removeAt(breakdownIndex);
+  }
+}
+
 
 submitBreakdown(index: number) {
   const record = this.records.at(index);
@@ -243,38 +257,100 @@ submitBreakdown(index: number) {
 
   var month = new Date(record.get('date')?.value).getMonth()+1
 
-  for (let i=0; i<breakdowns.value.length;i++){
-    console.log(breakdowns.value[i])
-    this.hrService.postWageAllocation(
-      record.get('punchLinkId')?.value,
-      new Date(record.get('date')?.value).getFullYear().toString(),
-      month.toString(),
-      new Date(record.get('date')?.value).getDate().toString(),
-      breakdowns.value[i].nor,
-      breakdowns.value[i].nott,
-      breakdowns.value[i].hott,
-      breakdowns.value[i].sott,
-      breakdowns.value[i].breakT,
-      this.employeeCtrl.value!,
-      breakdowns.value[i].premises,
-      breakdowns.value[i].jobNo,
-      breakdowns.value[i].soNo,
-      breakdowns.value[i].contractor
-    ).subscribe({
+  this.hrService.deleteWageAllocation(record.get('punchLinkId')?.value).subscribe({
     next: (res) => {
-      alert('Wage allocation submitted successfully!');
+      console.log('Wage allocation deleted successfully!');
       console.log(res);
+      for (let i=0; i<breakdowns.value.length;i++){
+        console.log(breakdowns.value[i])
+        this.hrService.postWageAllocation(
+          record.get('punchLinkId')?.value,
+          new Date(record.get('date')?.value).getFullYear().toString(),
+          month.toString(),
+          new Date(record.get('date')?.value).getDate().toString(),
+          breakdowns.value[i].nor,
+          breakdowns.value[i].nott,
+          breakdowns.value[i].hott,
+          breakdowns.value[i].sott,
+          breakdowns.value[i].breakT,
+          this.employeeCtrl.value!,
+          breakdowns.value[i].premises,
+          breakdowns.value[i].jobNo,
+          breakdowns.value[i].soNo,
+          breakdowns.value[i].contractor
+        ).subscribe({
+          next: (res) => {
+            if(i===breakdowns.value.length-1){
+              alert('Wage allocation submitted successfully!');
+            } else {
+              console.log('Wage allocation submitted successfully!');
+            }
+            console.log(res);
+          },
+          error: (err) => {
+            if (err.status === 200){
+              if(i===breakdowns.value.length-1){
+                alert('Wage allocation submitted successfully!');
+              } else {
+                console.log('Wage allocation submitted successfully!');
+              }            
+            } else {
+              alert('Error submitting wage allocation');
+              console.error(err);
+            }
+          }
+        });
+      }
     },
     error: (err) => {
       if (err.status === 200){
-        alert('Wage allocation submitted successfully!');
+        console.log('Wage allocation deleted successfully!');
+        for (let i=0; i<breakdowns.value.length;i++){
+          console.log(breakdowns.value[i])
+          this.hrService.postWageAllocation(
+            record.get('punchLinkId')?.value,
+            new Date(record.get('date')?.value).getFullYear().toString(),
+            month.toString(),
+            new Date(record.get('date')?.value).getDate().toString(),
+            breakdowns.value[i].nor,
+            breakdowns.value[i].nott,
+            breakdowns.value[i].hott,
+            breakdowns.value[i].sott,
+            breakdowns.value[i].breakT,
+            this.employeeCtrl.value!,
+            breakdowns.value[i].premises,
+            breakdowns.value[i].jobNo,
+            breakdowns.value[i].soNo,
+            breakdowns.value[i].contractor
+          ).subscribe({
+            next: (res) => {
+              if(i==breakdowns.value.length-1){
+                alert('Wage allocation submitted successfully!');
+              } else {
+                console.log('Wage allocation submitted successfully!');
+              }              
+              console.log(res);
+            },
+            error: (err) => {
+              if (err.status === 200){
+                if(i==breakdowns.value.length-1){
+                  alert('Wage allocation submitted successfully!');
+                } else {
+                  console.log('Wage allocation submitted successfully!');
+                }               
+              } else {
+                alert('Error submitting wage allocation');
+                console.error(err);
+              }
+            }
+          });
+        }
       } else {
         alert('Error submitting wage allocation');
         console.error(err);
       }
     }
   });
-  }
 
 }
 
@@ -289,7 +365,7 @@ submitBreakdown(index: number) {
     if (month.length < 2) {
       month = '0' + month;
     }
-    return [day, month, year].join('-');
+    return [year,month,date].join('-');
   }
 get records(): FormArray {
   return this.attendanceForm.get('records') as FormArray;

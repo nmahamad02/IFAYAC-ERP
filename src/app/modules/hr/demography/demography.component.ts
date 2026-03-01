@@ -1,4 +1,4 @@
-import { Component, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AccountsService } from 'src/app/services/accounts/accounts.service';
@@ -9,16 +9,37 @@ import { ChangeDetectorRef } from '@angular/core';
 import * as shape from 'd3-shape';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
+import { HrService } from 'src/app/services/hr/hr.service';
+import * as go from 'gojs';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-demography',
   templateUrl: './demography.component.html',
   styleUrls: ['./demography.component.scss']
 })
-export class DemographyComponent {
+export class DemographyComponent implements AfterViewInit {
     
   @ViewChild('birthdayPaginator') birthdayPaginator!: MatPaginator;
   @ViewChild('anniversaryPaginator') anniversaryPaginator!: MatPaginator;
+
+  /*********** New Code **********/
+
+  empno = localStorage.getItem('empno')!
+  @ViewChild('diagramDiv', { static: true }) diagramRef!: ElementRef;
+  private diagram!: go.Diagram;
+
+  divisionList: any[] = []
+  departmentList: any[] = []
+  lineList: any[] = []
+
+  empCode = this.empno;
+
+  selectedDivision = ''
+  selectedDepartment = ''
+  selectedLine = ''
+
+  /*********** New Code **********/
 
   empList: any[] = []
   searchText = ""
@@ -32,6 +53,8 @@ export class DemographyComponent {
   nationalityData: any[] = [];
   genderData: any[] = [];
   religionData: any[] = [];
+  bahrainisationData: any[] = [];
+  bahrainisationPercent: string = '0';
 
   // Chart options
   showLegend = true;
@@ -50,7 +73,7 @@ export class DemographyComponent {
   minDept: any;
 
 chartWidth = 0;
-chartHeight = window.innerWidth * 0.4;
+chartHeight = window.innerWidth //* 0.3;
 
 ready = false;
   longestServing: any;
@@ -80,6 +103,159 @@ ngAfterViewInit() {
   this.anniversaryPaginator.page.subscribe(() => {
     this.updatePagedAnniversaries();
   });
+
+
+
+
+
+const $ = go.GraphObject.make;
+
+this.diagram = $(go.Diagram, this.diagramRef.nativeElement, {
+  layout: $(go.TreeLayout, { angle: 90, layerSpacing: 35 }),
+  "undoManager.isEnabled": true
+});
+
+this.diagram.nodeTemplate =
+  $(go.Node, "Auto",
+    $(go.Shape, "RoundedRectangle",
+      { strokeWidth: 0, fill: "#ffffff", stroke: "#d0d0d0" }
+    ),
+    $(go.Panel, "Horizontal",
+      { padding: 8 },
+
+      // Avatar
+      $(go.Picture,
+        {
+          width: 50,
+          height: 50,
+          margin: 6,
+          imageStretch: go.GraphObject.UniformToFill
+        },
+        new go.Binding("source", "avatar")
+      ),
+
+      // Text block
+      $(go.Panel, "Vertical",
+        $(go.TextBlock,
+          { font: "bold 13px sans-serif" },
+          new go.Binding("text", "name")
+        ),
+        $(go.TextBlock,
+          { font: "11px sans-serif", stroke: "#555" },
+          new go.Binding("text", "title")
+        ),
+        $(go.TextBlock,
+          { font: "10px sans-serif", stroke: "#888" },
+          new go.Binding("text", "dept")
+        )
+      )
+    )
+  );
+
+
+
+  /*const $ = go.GraphObject.make;
+
+    const diagram = $(go.Diagram, this.diagramRef.nativeElement, {
+      layout: $(go.TreeLayout, { angle: 90, layerSpacing: 35 }),
+      "undoManager.isEnabled": true
+    });
+
+    // Node template
+    diagram.nodeTemplate =
+      $(go.Node, "Auto",
+        $(go.Shape, "RoundedRectangle",
+          { strokeWidth: 0, fill: "lightblue" },
+          new go.Binding("fill", "color")
+        ),
+        $(go.TextBlock,
+          { margin: 8, font: "bold 13px sans-serif" },
+          new go.Binding("text", "name")
+        )
+      );
+
+    // Org data
+    diagram.model = new go.TreeModel([
+      { key: 1, name: "CEO", color: "#ffd966" },
+      { key: 2, parent: 1, name: "CTO" },
+      { key: 3, parent: 1, name: "CFO" },
+      { key: 4, parent: 2, name: "Dev Manager" },
+      { key: 5, parent: 4, name: "Developer" }
+    ]);*/
+}
+
+/*buildOrgDiagram(data: any[]) {
+  const $ = go.GraphObject.make;
+
+  const diagram = $(go.Diagram, this.diagramRef.nativeElement, {
+    layout: $(go.TreeLayout, { angle: 90, layerSpacing: 35 }),
+    "undoManager.isEnabled": true
+  });
+
+  diagram.nodeTemplate =
+    $(go.Node, "Auto",
+      $(go.Shape, "RoundedRectangle",
+        { strokeWidth: 0, fill: "lightblue" },
+        new go.Binding("fill", "color")
+      ),
+      $(go.Panel, "Vertical",
+        $(go.TextBlock,
+          { margin: 4, font: "bold 13px sans-serif" },
+          new go.Binding("text", "name")
+        ),
+        $(go.TextBlock,
+          { margin: 2, font: "11px sans-serif", stroke: "#555" },
+          new go.Binding("text", "title")
+        )
+      )
+    );
+
+  // 🔥 convert API → TreeModel
+  const modelData = data.map(e => ({
+    key: e.empid,
+    parent: e.reportto || undefined,
+    name: e.empname,
+    title: e.designationDs,
+    dept: e.deptds,
+    level: e.Level
+  }));
+
+  diagram.model = new go.TreeModel(modelData);
+}*/
+
+buildOrgDiagram(data: any[]) {
+  if (!this.diagram) return;
+
+  const unique = new Map<number, any>();
+
+  data.forEach(e => {
+    unique.set(e.empid, {
+      key: e.empid,
+      parent: e.reportto || undefined,
+      name: e.empname,
+      title: e.designationDs,
+      dept: e.deptds,
+      avatar: this.bufferToBase64(e.ImageStream) || '',
+      level: e.Level
+    });
+  });
+
+  this.diagram.model = new go.TreeModel(Array.from(unique.values()));
+}
+
+loadOrgChart(empCode: string) {
+  forkJoin({
+    lineage: this.hrService.whoami(empCode),
+    team: this.hrService.getMyTeam(empCode)
+  }).subscribe(({ lineage, team }: any) => {
+
+    const teamMembers = team.recordset || [];
+
+    // Merge both arrays
+    const combined = [...lineage, ...teamMembers];
+
+    this.buildOrgDiagram(combined);
+  });
 }
 
 
@@ -90,12 +266,47 @@ async loadData() {
   this.ready = true;
 }
 
-  constructor(private financeService: FinanceService, private route: ActivatedRoute, private dialog: MatDialog, private router: Router, private accountService: AccountsService, private reportService: ReportsService, private dataSharingService: DataSharingService, private cdr: ChangeDetectorRef) { 
-    
+  constructor(private financeService: FinanceService, private route: ActivatedRoute, private dialog: MatDialog, private router: Router, private hrService: HrService, private reportService: ReportsService, private dataSharingService: DataSharingService, private cdr: ChangeDetectorRef) { 
+    this.getDivisionManagers();
+    console.log(this.empCode)
   }
 
-  fetchEmployees() {
+  getDivisionManagers(){
+    this.hrService.getMyTeam('412').subscribe((res: any) => {
+      this.divisionList = res.recordset;
+    })
+  }
 
+  getDepartmentManagers(){
+    this.hrService.getMyTeam(this.selectedDivision).subscribe((res: any) => {
+      this.departmentList = res.recordset;
+      this.loadOrgChart(this.selectedDivision);
+    }, (err: any) => {
+      this.loadOrgChart(this.selectedDivision);
+    })  
+  }
+
+  getLineManagers(){
+    this.hrService.getMyTeam(this.selectedDepartment).subscribe((res: any) => {
+      this.lineList = res.recordset;
+      this.loadOrgChart(this.selectedDepartment);
+    }, (err: any) => {
+      this.loadOrgChart(this.selectedDepartment);
+    })  
+  }
+
+  getTeamEmployees(){
+    this.hrService.getMyTeam(this.selectedLine).subscribe((res: any) => {
+      this.empList = res.recordset;
+      this.prepareCharts();
+      this.loadOrgChart(this.selectedLine);
+    }, (err: any) => {
+      this.loadOrgChart(this.selectedLine);
+    })
+  }
+
+
+  fetchEmployees() {
     this.reportService.getallemployees().subscribe((res: any) => {
       this.empList = res.recordset
       console.log(res.recordset)
@@ -130,11 +341,11 @@ this.longestServing = activeEmployees.reduce((a, b) => {
 
 
     // ✅ 2️⃣ Count by Department (active only)
-    const byDept = this.groupCount(activeEmployees, 'Deptds');
+    const byDept = this.groupCount(activeEmployees, 'deptds');
     this.departmentData = this.formatGroup(byDept);
 
     // ✅ 3️⃣ Count by Designation Level (active only)
-    const byDesig = this.groupCount(activeEmployees, 'DesignationDs');
+    const byDesig = this.groupCount(activeEmployees, 'designationDs');
     this.designationData = this.formatGroup(byDesig);
 
     // ✅ 4️⃣ Nationalities Breakdown (active only)
@@ -146,8 +357,26 @@ this.longestServing = activeEmployees.reduce((a, b) => {
     this.genderData = this.formatGroup(byGender);
 
     // ✅ 4️⃣ Religion Breakdown (active only)
-    const byReligion = this.groupCount(activeEmployees, 'religionname');
+    const byReligion = this.groupCount(activeEmployees, 'religionName');
     this.religionData = this.formatGroup(byReligion);
+
+    // bahrainisation
+    const bahrainis = activeEmployees.filter(e =>
+  e.Nation && e.Nation.toLowerCase().includes('bahrain')
+).length;
+
+const nonBahrainis = activeEmployees.length - bahrainis;
+
+this.bahrainisationData = [
+  { name: 'Bahraini', value: bahrainis },
+  { name: 'Non-Bahraini', value: nonBahrainis }
+];
+
+// Optional: percentage
+this.bahrainisationPercent =
+  activeEmployees.length
+    ? ((bahrainis / activeEmployees.length) * 100).toFixed(1)
+    : '0';
 
   
     // 2️⃣ Average Tenure (years since join date)
@@ -199,7 +428,7 @@ this.joinAttritionTrendData = [
   // 7️⃣ Average Tenure by Department
   const tenureByDept: any = {};
   activeEmployees.forEach(e => {
-    const dept = e.Deptds || 'Unknown';
+    const dept = e.deptds || 'Unknown';
     const tenure = e.joindt ? (now.getTime() - new Date(e.joindt).getTime()) / (1000 * 60 * 60 * 24 * 365) : 0;
     if (!tenureByDept[dept]) tenureByDept[dept] = [];
     tenureByDept[dept].push(tenure);
@@ -242,7 +471,7 @@ const ageDesignationPoints = activeEmployees
   .map(e => {
     const age = (today.getTime() - new Date(e.dateofbirth).getTime()) / (1000 * 60 * 60 * 24 * 365);
     return { 
-      name: e.DesignationDs, 
+      name: e.designationDs, 
       x: +age.toFixed(1),          // age in years
       y: e.DesignationLevelNumeric // numeric designation
     };
@@ -337,7 +566,7 @@ if (this.anniversaryPaginator) {
 
   this.deptOldest = this.avgTenureByDept.reduce((a, b) => (a.value > b.value ? a : b), { name: 'N/A', value: 0 });
   this.deptYoungest = Object.entries(byDept).map(([dept]) => {
-    const ages = activeEmployees.filter(e => e.Deptds === dept && e.dateofbirth)
+    const ages = activeEmployees.filter(e => e.deptds === dept && e.dateofbirth)
       .map(e => (now.getTime() - new Date(e.dateofbirth).getTime()) / (1000 * 60 * 60 * 24 * 365));
     return { name: dept, value: ages.length ? (ages.reduce((a, b) => a + b, 0) / ages.length).toFixed(1) : 0 };
   }).reduce((a, b) => (+a.value < +b.value ? a : b), { name: 'N/A', value: 999 });
@@ -405,6 +634,28 @@ setChartSize() {
   this.chartWidth = Math.floor(window.innerWidth * 1);
   this.chartHeight = Math.floor(window.innerHeight * 0.4);
 }
+
+private bufferToBase64(imageStream: any): string {
+  if (!imageStream || !imageStream.data || imageStream.data.length === 0) {
+    return this.defaultAvatar; // ← never return null
+  }
+
+  const binary = new Uint8Array(imageStream.data);
+  let binaryString = '';
+  binary.forEach(b => binaryString += String.fromCharCode(b));
+
+  return 'data:image/bmp;base64,' + btoa(binaryString);
+}
+
+private defaultAvatar =
+'data:image/svg+xml;utf8,' +
+encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80">
+  <rect width="100%" height="100%" fill="#e0e0e0"/>
+  <circle cx="40" cy="30" r="14" fill="#9e9e9e"/>
+  <rect x="18" y="46" width="44" height="20" rx="10" fill="#9e9e9e"/>
+</svg>
+`);
 
 /*@HostListener('window:resize', ['$event'])
 onResize() {
