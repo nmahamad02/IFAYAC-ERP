@@ -71,6 +71,7 @@
 
         mat-icon {
             color: #666;
+            font-size: 32px !important;
         }
     }
 
@@ -96,14 +97,15 @@
         //padding: 10px;
         border-radius: 4px;
     }
-  
+    
+        
     .mat-table {
         background: rgba(255, 255, 255, 0.8);
         border-radius: 10px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         
         mat-header-row {
-            background: #f8f9fa;
+            background: #292a2b;
             font-weight: bold;
         }
   
@@ -118,30 +120,16 @@
         background: transparent;
     }
 
-    .custom-tabs .mat-tab-label {
-  color: white !important;
-}
-
-.custom-tabs .mat-tab-label:hover {
-  color: grey !important;
-}
-
-.custom-tabs .mat-tab-label.mat-tab-label-active {
-  color: white !important;
-}
-
-.custom-tabs .mat-ink-bar {
-  background-color: white !important;
-}
-
-.mat-tree-node-label {
-    padding: 8px;
-    font-size: 14px;
-  }
-  .mat-tree-node {
-    list-style-type: none;
-  }
-  
-
+    mat-tab{
+        ::ng-deep .mat-tab-label {
+            color: white !important; /* Change tab label text color */
+          }
+          
+          ::ng-deep .mat-ink-bar {
+            background-color: white !important; /* Change active tab underline color */
+          }
+    }
+    
+      
   }
   

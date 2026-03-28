@@ -11,7 +11,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { HrService } from 'src/app/services/hr/hr.service';
 import * as go from 'gojs';
-import { forkJoin } from 'rxjs';
+import { of, forkJoin } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-demography',
@@ -25,13 +26,17 @@ export class DemographyComponent implements AfterViewInit {
 
   /*********** New Code **********/
 
-  empno = localStorage.getItem('empno')!
+  empno = JSON.parse(localStorage.getItem('empno')!);
   @ViewChild('diagramDiv', { static: true }) diagramRef!: ElementRef;
   private diagram!: go.Diagram;
 
   divisionList: any[] = []
   departmentList: any[] = []
   lineList: any[] = []
+
+divisionLocked = false;
+departmentLocked = false;
+lineLocked = false;
 
   empCode = this.empno;
 
@@ -88,7 +93,88 @@ ready = false;
 
 ngOnInit() {
   this.setChartSize();
+
+  if (this.empCode == 707) {
+
+  // CEO can select everything
+  this.divisionLocked = false;
+  this.departmentLocked = false;
+  this.lineLocked = false;
+
+  this.getDivisionManagers();
+
+} else {
+
+  this.initializeFromWhoAmI();
+
+}
+
   this.loadData();
+}
+
+initializeFromWhoAmI() {
+
+  this.hrService.whoami(this.empCode).subscribe((res: any) => {
+
+    const data = res.recordset || res;
+
+    const division = data.find((x: any) => x.Level === 2);
+    const department = data.find((x: any) => x.Level === 3);
+    const line = data.find((x: any) => x.Level === 4);
+
+    this.divisionLocked = false;
+    this.departmentLocked = false;
+    this.lineLocked = false;
+
+    // LEVEL 4
+    if (line) {
+
+      this.divisionLocked = true;
+      this.departmentLocked = true;
+      this.lineLocked = true;
+
+      this.getDivisionManagers(() => {
+        this.selectedDivision = division?.empid || '';
+        this.getDepartmentManagers(() => {
+          this.selectedDepartment = department?.empid || '';
+          this.getLineManagers(() => {
+            this.selectedLine = line.empid;
+            this.loadOrgChart(line.empid);
+          });
+        });
+      });
+      return;
+    }
+
+    // LEVEL 3
+    if (department) {
+
+      this.divisionLocked = true;
+      this.departmentLocked = true;
+
+      this.getDivisionManagers(() => {
+        this.selectedDivision = division?.empid || '';
+        this.getDepartmentManagers(() => {
+          this.selectedDepartment = department.empid;
+          this.getLineManagers();
+          this.loadOrgChart(department.empid);
+        });
+      });
+      return;
+    }
+
+    // LEVEL 2
+    if (division) {
+      this.divisionLocked = true;
+      this.getDivisionManagers(() => {
+        this.selectedDivision = division.empid;
+        this.getDepartmentManagers();
+        this.loadOrgChart(division.empid);
+      });
+      return;
+    }
+  });
+
 }
 
 ngAfterViewInit() {
@@ -242,7 +328,7 @@ buildOrgDiagram(data: any[]) {
 
   this.diagram.model = new go.TreeModel(Array.from(unique.values()));
 }
-
+/*
 loadOrgChart(empCode: string) {
   forkJoin({
     lineage: this.hrService.whoami(empCode),
@@ -256,9 +342,30 @@ loadOrgChart(empCode: string) {
 
     this.buildOrgDiagram(combined);
   });
+}*/
+
+loadOrgChart(empCode: string) {
+  forkJoin({
+    lineage: this.hrService.whoami(empCode),
+    team: this.hrService.getMyTeam(empCode)
+      .pipe(
+        // never fail; return empty array if API errors
+        catchError(err => {
+          console.warn('No downstream employees', err);
+          return of({ recordset: [] });
+        })
+      )
+  }).subscribe(({ lineage, team }: any) => {
+
+    const teamMembers = team?.recordset || [];
+
+    // Merge upstream lineage + downstream team
+    const combined = [...(lineage?.recordset || lineage || []), ...teamMembers];
+
+    // Build chart even if teamMembers is empty
+    this.buildOrgDiagram(combined);
+  });
 }
-
-
 
 async loadData() {
   await this.fetchEmployees(); // or however you get empList
@@ -267,44 +374,87 @@ async loadData() {
 }
 
   constructor(private financeService: FinanceService, private route: ActivatedRoute, private dialog: MatDialog, private router: Router, private hrService: HrService, private reportService: ReportsService, private dataSharingService: DataSharingService, private cdr: ChangeDetectorRef) { 
-    this.getDivisionManagers();
     console.log(this.empCode)
   }
 
-  getDivisionManagers(){
-    this.hrService.getMyTeam('412').subscribe((res: any) => {
-      this.divisionList = res.recordset;
-    })
-  }
+getDivisionManagers(callback?: () => void) {
 
-  getDepartmentManagers(){
-    this.hrService.getMyTeam(this.selectedDivision).subscribe((res: any) => {
-      this.departmentList = res.recordset;
-      this.loadOrgChart(this.selectedDivision);
-    }, (err: any) => {
-      this.loadOrgChart(this.selectedDivision);
-    })  
-  }
+  this.hrService.getMyTeam(this.empCode).subscribe((res: any) => {
 
-  getLineManagers(){
-    this.hrService.getMyTeam(this.selectedDepartment).subscribe((res: any) => {
-      this.lineList = res.recordset;
-      this.loadOrgChart(this.selectedDepartment);
-    }, (err: any) => {
-      this.loadOrgChart(this.selectedDepartment);
-    })  
-  }
+    this.divisionList = res.recordset || [];
 
-  getTeamEmployees(){
-    this.hrService.getMyTeam(this.selectedLine).subscribe((res: any) => {
-      this.empList = res.recordset;
-      this.prepareCharts();
-      this.loadOrgChart(this.selectedLine);
-    }, (err: any) => {
-      this.loadOrgChart(this.selectedLine);
-    })
-  }
+    // Update charts when division level selected
+    if (this.selectedDivision) {
+      this.hrService.getMyTeam(this.selectedDivision).subscribe((team: any) => {
 
+        this.empList = team.recordset || [];
+        this.prepareCharts();
+        this.loadOrgChart(this.selectedDivision);
+
+      }, (err: any) => {
+                this.loadOrgChart(this.selectedDivision);
+    //alert('No breakdown for selected employee!')
+  });
+    }
+
+    if (callback) callback();
+  });
+
+}
+
+getDepartmentManagers(callback?: () => void) {
+
+  if (!this.selectedDivision) return;
+
+  this.hrService.getMyTeam(this.selectedDivision).subscribe((res: any) => {
+
+    this.departmentList = res.recordset || [];
+
+    // Update charts for department selection
+    this.empList = res.recordset || [];
+    this.prepareCharts();
+    this.loadOrgChart(this.selectedDivision);
+
+    if (callback) callback();
+  }, (err: any) => {
+        this.loadOrgChart(this.selectedDivision);
+    //alert('No breakdown for selected employee!')
+  });
+
+}
+
+getLineManagers(callback?: () => void) {
+
+  if (!this.selectedDepartment) return;
+
+  this.hrService.getMyTeam(this.selectedDepartment).subscribe((res: any) => {
+
+    this.lineList = res.recordset || [];
+
+    // Update charts for department level
+    this.empList = res.recordset || [];
+    this.prepareCharts();
+    this.loadOrgChart(this.selectedDepartment);
+
+    if (callback) callback();
+  }, (err: any) => {
+        this.loadOrgChart(this.selectedDivision);
+    //alert('No breakdown for selected employee!')
+  });
+
+}
+
+getTeamEmployees() {
+  if (!this.selectedLine) return;
+  this.hrService.getMyTeam(this.selectedLine).subscribe((res: any) => {
+    this.empList = res.recordset || [];
+    this.prepareCharts();
+    this.loadOrgChart(this.selectedLine);
+  }, (err: any) => {
+    this.loadOrgChart(this.selectedLine);
+    //alert('No breakdown for selected employee!')
+  });
+}
 
   fetchEmployees() {
     this.reportService.getallemployees().subscribe((res: any) => {

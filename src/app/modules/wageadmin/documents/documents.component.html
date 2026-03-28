@@ -1,0 +1,426 @@
+<div class="container-fluid">
+  <div class="row no-gutters">
+    <div class="visualization-heading col-12">
+      <div class="heading-info">
+        <div class="row">
+          <div class="col">
+            <h3 class="heading-title">Document Dashboard</h3>
+          </div>
+
+          <!-- Print Button -->
+          <div class="col-1">
+            <button class="btn-info text-white btn btn-block btn-sm"
+              title="Print Document Report"
+              style="float:right"
+              (click)="exportDocuments()">
+              <mat-icon>print</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="row mt-2">
+          <div class="col-4">
+            <select class="form-select form-select-sm" [(ngModel)]="selectedDepartment" (change)="filterDept()">
+              <option value="">Departments</option>
+              <option *ngFor="let dept of departmentList" [value]="dept">{{ dept }}</option>
+            </select>
+          </div>
+
+          <div class="col-4">
+            <select class="form-select form-select-sm" [(ngModel)]="selectedType" (change)="filterType()">
+              <option value="">Document Types</option>
+              <option *ngFor="let doc of documentTypes" [value]="doc">{{ doc }}</option>
+            </select>
+          </div>
+
+          <div class="col-4">
+            <select class="form-select form-select-sm" [(ngModel)]="selectedStatus" (change)="filterStatus()">
+              <option value="">Status</option>
+              <option value="Valid">Valid</option>
+              <option value="Expired">Expired</option>
+              <option value="Expiring Soon">Expiring Soon</option>
+            </select>
+          </div>
+        </div>
+
+        <br>
+
+        <!-- KPI CARDS -->
+        <mat-card appearance="outlined" style="background-color: rgb(128,128,128); color:white;">
+          <mat-card-header>
+            <mat-card-title>Documents Overview</mat-card-title>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="row mt-3">
+
+              <!-- Total Docs -->
+              <div class="col-12 col-sm-6 col-md-3">
+                <mat-card appearance="outlined" style="background-color:#3B82F6; color:white;">
+                  <mat-card-header>
+                    <mat-card-title>
+                      <i class="bi bi-file-earmark-text-fill"></i>
+                      {{ totalDocuments }}
+                    </mat-card-title>
+                    <mat-card-subtitle>Total Documents</mat-card-subtitle>
+                  </mat-card-header>
+                  <br>
+                </mat-card>
+              </div>
+
+              <!-- Valid Docs -->
+              <div class="col-12 col-sm-6 col-md-3">
+                <mat-card appearance="outlined" style="background-color:#10B981; color:white;">
+                  <mat-card-header>
+                    <mat-card-title>
+                      <i class="bi bi-check-circle-fill"></i>
+                      {{ validDocuments }}
+                    </mat-card-title>
+                    <mat-card-subtitle>Valid Documents</mat-card-subtitle>
+                  </mat-card-header>
+                  <br>
+                </mat-card>
+              </div>
+
+              <!-- Expired -->
+              <div class="col-12 col-sm-6 col-md-3">
+                <mat-card appearance="outlined" style="background-color:#EF4444; color:white;">
+                  <mat-card-header>
+                    <mat-card-title>
+                      <i class="bi bi-x-circle-fill"></i>
+                      {{ expiredDocuments }}
+                    </mat-card-title>
+                    <mat-card-subtitle>Expired Documents</mat-card-subtitle>
+                  </mat-card-header>
+                  <br>
+                </mat-card>
+              </div>
+
+              <!-- Expiring Soon -->
+              <div class="col-12 col-sm-6 col-md-3">
+                <mat-card appearance="outlined" style="background-color:#F59E0B; color:white;">
+                  <mat-card-header>
+                    <mat-card-title>
+                      <i class="bi bi-exclamation-triangle-fill"></i>
+                      {{ expiringSoon }}
+                    </mat-card-title>
+                    <mat-card-subtitle>Expiring in 30 Days</mat-card-subtitle>
+                  </mat-card-header>
+                  <br>
+                </mat-card>
+              </div>
+
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <br>
+
+        <!-- ============= ANALYTICS SECTION ============= -->
+        <mat-card appearance="outlined" style="background-color: rgb(128,128,128); color:white;">
+          <mat-card-header>
+            <mat-card-title>Analytics</mat-card-title>
+          </mat-card-header>
+          <br>
+
+          <mat-card-content>
+
+            <!-- ✅ NEW 3 PIE CHART ROW -->
+            <div class="row">
+
+              <!-- Status Breakdown -->
+              <div class="col-12 col-md-4">
+                <mat-card appearance="outlined" style="height:100%;">
+                  <mat-card-header>
+                    <mat-card-subtitle>Status Breakdown</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <ngx-charts-pie-chart
+                      [results]="statusChart"
+                      [legend]="false"
+                      [labels]="true"
+                      [doughnut]="true"
+                      [gradient]="false"
+                      style="display:block; width:90%; height:{{ chartHeight }}px;">
+                    </ngx-charts-pie-chart>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <!-- ✅ NEW: Document Category Distribution -->
+              <div class="col-12 col-md-4">
+                <mat-card appearance="outlined" style="height:100%;">
+                  <mat-card-header>
+                    <mat-card-subtitle>Document Category Distribution</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <ngx-charts-pie-chart
+                      [results]="documentCategoryChart"
+                      [legend]="false"
+                      [labels]="true"
+                      [doughnut]="true"
+                      [gradient]="false"
+                      style="display:block; width:90%; height:{{ chartHeight }}px;">
+                    </ngx-charts-pie-chart>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <!-- ✅ NEW: Expiry Risk Segmentation -->
+              <div class="col-12 col-md-4">
+                <mat-card appearance="outlined" style="height:100%;">
+                  <mat-card-header>
+                    <mat-card-subtitle>Expiry Risk Segmentation</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <ngx-charts-pie-chart
+                      [results]="expiryRiskChart"
+                      [legend]="false"
+                      [labels]="true"
+                      [doughnut]="true"
+                      [gradient]="false"
+                      style="display:block; width:90%; height:{{ chartHeight }}px;">
+                    </ngx-charts-pie-chart>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+            </div>
+
+            <br>
+
+            <!-- Documents by Department -->
+            <div class="row">
+              <div class="col-12">
+                <mat-card appearance="outlined">
+                  <mat-card-header>
+                    <mat-card-subtitle>Documents by Department</mat-card-subtitle>
+                  </mat-card-header>
+                  <br>
+                  <mat-card-content>
+                    <ngx-charts-bar-vertical
+                      [results]="documentsByDept"
+                      [xAxis]="true"
+                      [yAxis]="true"
+                      [showDataLabel]="true"
+                      [roundEdges]="false"
+                      style="display:block; width:90%; height:{{ chartHeight }}px;">
+                    </ngx-charts-bar-vertical>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
+
+            <br>
+
+            <!-- Document Types -->
+            <div class="row">
+              <div class="col-12">
+                <mat-card appearance="outlined">
+                  <mat-card-header>
+                    <mat-card-subtitle>Document Types</mat-card-subtitle>
+                  </mat-card-header>
+                  <br>
+                  <mat-card-content>
+                    <ngx-charts-bar-vertical
+                      [results]="documentsByType"
+                      [xAxis]="true"
+                      [yAxis]="true"
+                      [showDataLabel]="true"
+                      [roundEdges]="false"
+                      style="display:block; width:90%; height:{{ chartHeight }}px;">
+                    </ngx-charts-bar-vertical>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
+
+            <br>
+
+            <!-- RISK CARDS -->
+            <div class="row">
+
+              <div class="col-12 col-sm-6 col-md-3">
+                <mat-card appearance="outlined" style="background-color:#EF4444; color:white;">
+                  <mat-card-header>
+                    <mat-card-title>Highest Expired Dept</mat-card-title>
+                    <mat-card-subtitle>{{ highestExpiredDept?.name }} ({{ highestExpiredDept?.value }})</mat-card-subtitle>
+                  </mat-card-header>
+                  <br>
+                </mat-card>
+              </div>
+
+              <div class="col-12 col-sm-6 col-md-3">
+                <mat-card appearance="outlined" style="background-color:#10B981; color:white;">
+                  <mat-card-header>
+                    <mat-card-title>Best Compliance</mat-card-title>
+                    <mat-card-subtitle>{{ bestDept?.name }} ({{ bestDept?.value | number:'1.1-2'}}%)</mat-card-subtitle>
+                  </mat-card-header>
+                  <br>
+                </mat-card>
+              </div>
+
+              <div class="col-12 col-sm-6 col-md-3">
+                <mat-card appearance="outlined" style="background-color:#F59E0B; color:white;">
+                  <mat-card-header>
+                    <mat-card-title>At-Risk Doc Type</mat-card-title>
+                    <mat-card-subtitle>{{ topRiskType }}</mat-card-subtitle>
+                  </mat-card-header>
+                  <br>
+                </mat-card>
+              </div>
+
+              <div class="col-12 col-sm-6 col-md-3">
+                <mat-card appearance="outlined" style="background-color:#6366F1; color:white;">
+                  <mat-card-header>
+                    <mat-card-title>Fastest Expiring</mat-card-title>
+                    <mat-card-subtitle>{{ fastestExpiringType }}</mat-card-subtitle>
+                  </mat-card-header>
+                  <br>
+                </mat-card>
+              </div>
+
+            </div>
+
+            <br>
+
+            <!-- Expiring Soon + Recently Expired -->
+            <div class="row">
+
+              <!-- Expiring Soon -->
+              <div class="col-12 col-md-6">
+                <mat-card appearance="outlined">
+                  <mat-card-header>
+                    <mat-card-subtitle>Expiring in Next 30 Days</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+
+                    <table class="table table-striped table-sm mb-0">
+                      <thead>
+                        <tr>
+                          <th><small>Employee</small></th>
+                          <th><small>Document</small></th>
+                          <th><small>Expiry</small></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let d of expiringSoonPaged">
+                          <td><small>{{ d.EMPNAME }}</small></td>
+                          <td><small>{{ d.DocumentName }}</small></td>
+                          <td><small>{{ d.ExpiryDate | date:'mediumDate' }}</small></td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <mat-paginator #expSoonPag [pageSize]="10" [length]="expiringSoonList.length"></mat-paginator>
+
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <!-- Recently Expired -->
+              <div class="col-12 col-md-6">
+                <mat-card appearance="outlined">
+                  <mat-card-header>
+                    <mat-card-subtitle>Recently Expired</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+
+                    <table class="table table-striped table-sm mb-0">
+                      <thead>
+                        <tr>
+                          <th><small>Employee</small></th>
+                          <th><small>Document</small></th>
+                          <th><small>Expired On</small></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let d of expiredPaged">
+                          <td><small>{{ d.EMPNAME }}</small></td>
+                          <td><small>{{ d.DocumentName }}</small></td>
+                          <td><small>{{ d.ExpiryDate | date:'mediumDate' }}</small></td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <mat-paginator #expiredPag [pageSize]="10" [length]="expiredDocumentsList.length"></mat-paginator>
+
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+            </div>
+
+            <br>
+
+            <!-- Expiry Trend -->
+            <div class="row">
+              <div class="col-12">
+                <mat-card appearance="outlined">
+                  <mat-card-header>
+                    <mat-card-subtitle>Expiry Trend (Next 12 Months)</mat-card-subtitle>
+                  </mat-card-header>
+                  <br>
+                  <mat-card-content>
+                    <ngx-charts-line-chart
+                      [results]="expiryTrend"
+                      [xAxis]="true"
+                      [yAxis]="true"
+                      [showGridLines]="true"
+                      [autoScale]="true"
+                      [timeline]="true"
+                      style="display:block; width:90%; height:{{ chartHeight }}px;">
+                    </ngx-charts-line-chart>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
+
+          </mat-card-content>
+        </mat-card>
+
+        <!-- =========== MASTER TABLE =========== -->
+        <div class="row">
+          <div class="col-12">
+
+            <input class="form-control mb-3" placeholder="Search Documents..." [(ngModel)]="searchText">
+
+            <table class="table table-hover table-responsive-xxl">
+              <thead class="table-dark">
+                <tr>
+                  <th>Document</th>
+                  <th>Employee</th>
+                  <th>Department</th>
+                  <th>Issue</th>
+                  <th>Expiry</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let d of (documentList | filterTable:searchText | slice:0:25)">
+                  <td>{{ d.DocumentName }}</td>
+                  <td>{{ d.EMPNAME }}</td>
+                  <td>{{ d.DEPARTMENT_NAME }}</td>
+                  <td>{{ d.IssueDate | date:'shortDate' }}</td>
+                  <td>{{ d.ExpiryDate | date:'shortDate' }}</td>
+                  <td>
+                    <span class="badge"
+                      [ngStyle]="{'background-color': d.StatusColor, 'color':'white'}">
+                      {{ d.Status }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<br>

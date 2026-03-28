@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CustomerDetailComponent } from './customer-component/customer-detail/customer-detail.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -12,58 +11,61 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTreeModule } from '@angular/material/tree';
 import { RouterModule } from '@angular/router';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { SharedModule } from '../shared/shared.module';
-import { OrderAnalysisComponent } from './order-analysis/order-analysis.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
-export const receivablesRoutes = [
+import { DocumentsComponent } from './documents/documents.component';
+import { PayslipsComponent } from './payslips/payslips.component';
+
+export const wagesRoutes = [
   {
-    path: 'customer/detail/:pcode',
-    component: CustomerDetailComponent
+    path: 'documents',
+    component: DocumentsComponent
   },
     {
-    path: 'order-analysis',
-    component: OrderAnalysisComponent
+    path: 'payslips',
+    component: PayslipsComponent
   }
 ];
 
 @NgModule({
   declarations: [
-    CustomerDetailComponent,
-    OrderAnalysisComponent
-  ],
-  imports: [
-    MatIconModule,
-    NgxChartsModule,
-    CommonModule,
-    SharedModule,
-    MatTabsModule,
-    MatFormFieldModule,
-    MatExpansionModule,
-    MatInputModule,
-    MatDatepickerModule,
-    MatDialogModule,
-    MatProgressSpinnerModule,
-    MatTableModule,
-    MatButtonModule,
-    MatCardModule,
-    MatSelectModule,
-    MatPaginatorModule,
-    MatDividerModule,
-    MatTreeModule,
-    MatSortModule,
-    FormsModule,
-    PdfViewerModule,
-    ReactiveFormsModule,
-    RouterModule.forChild(receivablesRoutes)  
-  ]
+    DocumentsComponent,
+    PayslipsComponent
+  ], imports: [
+      CommonModule,
+      MatIconModule,
+      NgxChartsModule,
+      SharedModule,
+      MatAutocompleteModule,
+      MatTabsModule,
+      MatFormFieldModule,
+      MatExpansionModule,
+      MatInputModule,
+      MatDatepickerModule,
+      MatDialogModule,
+      MatProgressSpinnerModule,
+      MatTableModule,
+      MatButtonModule,
+      MatCardModule,
+      MatSelectModule,
+      MatPaginatorModule,
+      MatDividerModule,
+      MatTreeModule,
+      MatSortModule,
+      FormsModule,
+      PdfViewerModule,
+      ReactiveFormsModule,
+      RouterModule.forChild(wagesRoutes)  
+    ]
 })
-export class ReceivablesModule { }
+export class WageadminModule { }

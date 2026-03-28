@@ -42,9 +42,9 @@ export class DashboardComponent {
     this.reportService.getCustomerList('C').subscribe((res: any) => {
       this.topCustList = res.recordset
     })
-    this.reportService.getProductList().subscribe((res: any) => {
+    /*this.reportService.getProductList().subscribe((res: any) => {
       this.topProdList = res.recordset
-    })    
+    })*/  
     this.reportService.listAllBusinessCenters().subscribe((res: any) => {
       this.busiCount = res.length
     })

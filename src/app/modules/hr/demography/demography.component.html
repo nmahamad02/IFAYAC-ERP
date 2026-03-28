@@ -18,19 +18,19 @@
                 </div>
                 <div class="row">
                     <div class="col-4">
-                        <select [(ngModel)]="selectedDivision" class="form-select form-select-sm" (change)="getDepartmentManagers()">
+                        <select [(ngModel)]="selectedDivision" class="form-select form-select-sm" (change)="getDepartmentManagers()" [disabled]="divisionLocked">
                             <option value="">Divisions</option>
                             <option *ngFor="let div of divisionList" [value]="div.empid">{{ div.deptds }} | {{ div.empname }}</option>
                         </select>
                     </div>
                     <div class="col-4">
-                        <select [(ngModel)]="selectedDepartment" class="form-select form-select-sm" (change)="getLineManagers()">
+                        <select [(ngModel)]="selectedDepartment" class="form-select form-select-sm" (change)="getLineManagers()" [disabled]="departmentLocked">
                             <option value="">Departments</option>
                             <option *ngFor="let dept of departmentList" [value]="dept.empid">{{ dept.deptds }} | {{ dept.empname }}</option>
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <select [(ngModel)]="selectedLine" class="form-select form-select-sm" (change)="getTeamEmployees()">
+                        <select [(ngModel)]="selectedLine" class="form-select form-select-sm" (change)="getTeamEmployees()" [disabled]="lineLocked">
                             <option value="">Designations</option>
                             <option *ngFor="let line of lineList" [value]="line.empid">{{ line.deptds }} | {{ line.empname }}</option>
                         </select>

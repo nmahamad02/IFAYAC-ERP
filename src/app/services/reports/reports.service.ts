@@ -6,17 +6,16 @@ import { Injectable } from '@angular/core';
 })
 export class ReportsService {
   private url1 = 'https://ifayacapi.theworkpc.com/api';
-  private url2 = 'https://api.ifagate-petzone.theworkpc.com/api'
 
   constructor(private http:HttpClient) { }
 
-  getBusinessCount(type: string) {
+  /*getBusinessCount(type: string) {
     return this.http.get(this.url2 + '/report/get-business-count/' + type)
-  }    
+  }*/  
   
-  getCustomerCount() {
+  /*getCustomerCount() {
     return this.http.get(this.url2 + '/report/get-customer-count')
-  }  
+  }*/
 
   getBusinessList(type: string) {
     return this.http.get(this.url1 + '/hana/listbp/' + type)
@@ -90,7 +89,7 @@ export class ReportsService {
     return this.http.get(this.url1 + '/hana/gettop15jobs/' + search)
   } 
 
-  getProductList() {
+  /*getProductList() {
     return this.http.get(this.url2 + '/report/get-product-list')
   } 
   
@@ -104,14 +103,14 @@ export class ReportsService {
 
   getMonthwiseSalesdata(country: string) {
     return this.http.get(this.url2 + '/report/get-monthwise-salesdata/' + country)
-  }
+  }*/
 
   getCustomerSoa(type: string,pcode: string) {
    // return this.http.get(this.url2 + '/report/get-customer-soa/' + type + '/' + pcode)
     return this.http.get(this.url1 + '/hana/getcuststmt/' + pcode)
   }
 
-  getParentSoa(parentcode: string) {
+  /*getParentSoa(parentcode: string) {
     return this.http.get(this.url2 + '/report/get-parent-soa/' + parentcode)
   }
 
@@ -185,5 +184,17 @@ export class ReportsService {
   
   getSlowMovingBrand(period: string) {
     return this.http.get(this.url2 + '/report/get-slow-moving-brand/'  + period)
-  }  
+  } */
+
+  getDocumentStatus() {
+    return this.http.get(this.url1 + '/reports/DocStatus')
+  }
+
+  trackDocuments(pcode: string) {
+    return this.http.get(this.url1 + '/reports/DocTrack/' + pcode)
+  }
+
+  getMyPayslip(pcode: string) {
+    return this.http.get(this.url1 + '/reports/myPayslip/' + pcode)
+  }
 }
