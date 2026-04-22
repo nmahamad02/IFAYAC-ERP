@@ -23,6 +23,7 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { SharedModule } from '../shared/shared.module';
 import { OrderAnalysisComponent } from './order-analysis/order-analysis.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { AgeingAnalysisComponent } from './ageing-analysis/ageing-analysis.component';
 
 export const receivablesRoutes = [
   {
@@ -32,13 +33,18 @@ export const receivablesRoutes = [
     {
     path: 'order-analysis',
     component: OrderAnalysisComponent
+  },
+    {
+    path: 'ageing-analysis',
+    component: AgeingAnalysisComponent
   }
 ];
 
 @NgModule({
   declarations: [
     CustomerDetailComponent,
-    OrderAnalysisComponent
+    OrderAnalysisComponent,
+    AgeingAnalysisComponent
   ],
   imports: [
     MatIconModule,

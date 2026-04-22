@@ -197,4 +197,9 @@ export class ReportsService {
   getMyPayslip(pcode: string) {
     return this.http.get(this.url1 + '/reports/myPayslip/' + pcode)
   }
+
+  getCustAge() {
+    return this.http.get(this.url1 + '/hana/getCustAge')
+  }
+
 }

@@ -126,6 +126,150 @@
 
           <mat-card-content>
 
+                        <!-- Document Types -->
+            <div class="row">
+              <div class="col-12">
+                <mat-card appearance="outlined">
+                  <mat-card-header>
+                    <mat-card-subtitle>Document Types</mat-card-subtitle>
+                  </mat-card-header>
+                  <br>
+                  <mat-card-content>
+                    <ngx-charts-bar-vertical
+                      [results]="documentsByType"
+                      [xAxis]="true"
+                      [yAxis]="true"
+                      [showDataLabel]="true"
+                      [roundEdges]="false"
+                      style="display:block; width:90%; height:{{ chartHeight }}px;">
+                    </ngx-charts-bar-vertical>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
+
+            <br>
+
+            <!-- RISK CARDS -->
+            <div class="row">
+
+              <div class="col-12 col-sm-6 col-md-3">
+                <mat-card appearance="outlined" style="background-color:#EF4444; color:white;">
+                  <mat-card-header>
+                    <mat-card-title>Highest Expired Dept</mat-card-title>
+                    <mat-card-subtitle>{{ highestExpiredDept?.name }} ({{ highestExpiredDept?.value }})</mat-card-subtitle>
+                  </mat-card-header>
+                  <br>
+                </mat-card>
+              </div>
+
+              <div class="col-12 col-sm-6 col-md-3">
+                <mat-card appearance="outlined" style="background-color:#10B981; color:white;">
+                  <mat-card-header>
+                    <mat-card-title>Best Compliance</mat-card-title>
+                    <mat-card-subtitle>{{ bestDept?.name }} ({{ bestDept?.value | number:'1.1-2'}}%)</mat-card-subtitle>
+                  </mat-card-header>
+                  <br>
+                </mat-card>
+              </div>
+
+              <div class="col-12 col-sm-6 col-md-3">
+                <mat-card appearance="outlined" style="background-color:#F59E0B; color:white;">
+                  <mat-card-header>
+                    <mat-card-title>At-Risk Doc Type</mat-card-title>
+                    <mat-card-subtitle>{{ topRiskType }}</mat-card-subtitle>
+                  </mat-card-header>
+                  <br>
+                </mat-card>
+              </div>
+
+              <div class="col-12 col-sm-6 col-md-3">
+                <mat-card appearance="outlined" style="background-color:#6366F1; color:white;">
+                  <mat-card-header>
+                    <mat-card-title>Fastest Expiring</mat-card-title>
+                    <mat-card-subtitle>{{ fastestExpiringType }}</mat-card-subtitle>
+                  </mat-card-header>
+                  <br>
+                </mat-card>
+              </div>
+
+            </div>
+
+            <br>
+
+            <!-- Expiring Soon + Recently Expired -->
+            <div class="row">
+
+              <!-- Expiring Soon -->
+              <div class="col-12 col-md-6">
+                <mat-card appearance="outlined">
+                  <mat-card-header>
+                    <mat-card-subtitle>Expiring in Next 30 Days</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+
+                    <table class="table table-striped table-sm mb-0">
+                      <thead>
+                        <tr>
+                          <th><small>Employee</small></th>
+                          <th><small>Document Type</small></th>
+                          <th><small>Document Number</small></th>
+                          <th><small>Expiry</small></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let d of expiringSoonPaged">
+                          <td><small>{{ d.EMPNAME }}</small></td>
+                          <td><small>{{ d.DocumentName }}</small></td>
+                          <td><small>{{ d.DocNo }}</small></td>
+                          <td><small>{{ d.ExpiryDate | date:'mediumDate' }}</small></td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <mat-paginator #expSoonPag [pageSize]="10" [length]="expiringSoonList.length"></mat-paginator>
+
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <!-- Recently Expired -->
+              <div class="col-12 col-md-6">
+                <mat-card appearance="outlined">
+                  <mat-card-header>
+                    <mat-card-subtitle>Recently Expired</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+
+                    <table class="table table-striped table-sm mb-0">
+                      <thead>
+                        <tr>
+                          <th><small>Employee</small></th>
+                          <th><small>Document Type</small></th>
+                          <th><small>Document Number</small></th>                          
+                          <th><small>Expired On</small></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let d of expiredPaged">
+                          <td><small>{{ d.EMPNAME }}</small></td>
+                          <td><small>{{ d.DocumentName }}</small></td>
+                          <td><small>{{ d.DocNo }}</small></td>
+                          <td><small>{{ d.ExpiryDate | date:'mediumDate' }}</small></td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <mat-paginator #expiredPag [pageSize]="10" [length]="expiredDocumentsList.length"></mat-paginator>
+
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+            </div>
+
+            <br>
+
             <!-- ✅ NEW 3 PIE CHART ROW -->
             <div class="row">
 
@@ -214,146 +358,6 @@
 
             <br>
 
-            <!-- Document Types -->
-            <div class="row">
-              <div class="col-12">
-                <mat-card appearance="outlined">
-                  <mat-card-header>
-                    <mat-card-subtitle>Document Types</mat-card-subtitle>
-                  </mat-card-header>
-                  <br>
-                  <mat-card-content>
-                    <ngx-charts-bar-vertical
-                      [results]="documentsByType"
-                      [xAxis]="true"
-                      [yAxis]="true"
-                      [showDataLabel]="true"
-                      [roundEdges]="false"
-                      style="display:block; width:90%; height:{{ chartHeight }}px;">
-                    </ngx-charts-bar-vertical>
-                  </mat-card-content>
-                </mat-card>
-              </div>
-            </div>
-
-            <br>
-
-            <!-- RISK CARDS -->
-            <div class="row">
-
-              <div class="col-12 col-sm-6 col-md-3">
-                <mat-card appearance="outlined" style="background-color:#EF4444; color:white;">
-                  <mat-card-header>
-                    <mat-card-title>Highest Expired Dept</mat-card-title>
-                    <mat-card-subtitle>{{ highestExpiredDept?.name }} ({{ highestExpiredDept?.value }})</mat-card-subtitle>
-                  </mat-card-header>
-                  <br>
-                </mat-card>
-              </div>
-
-              <div class="col-12 col-sm-6 col-md-3">
-                <mat-card appearance="outlined" style="background-color:#10B981; color:white;">
-                  <mat-card-header>
-                    <mat-card-title>Best Compliance</mat-card-title>
-                    <mat-card-subtitle>{{ bestDept?.name }} ({{ bestDept?.value | number:'1.1-2'}}%)</mat-card-subtitle>
-                  </mat-card-header>
-                  <br>
-                </mat-card>
-              </div>
-
-              <div class="col-12 col-sm-6 col-md-3">
-                <mat-card appearance="outlined" style="background-color:#F59E0B; color:white;">
-                  <mat-card-header>
-                    <mat-card-title>At-Risk Doc Type</mat-card-title>
-                    <mat-card-subtitle>{{ topRiskType }}</mat-card-subtitle>
-                  </mat-card-header>
-                  <br>
-                </mat-card>
-              </div>
-
-              <div class="col-12 col-sm-6 col-md-3">
-                <mat-card appearance="outlined" style="background-color:#6366F1; color:white;">
-                  <mat-card-header>
-                    <mat-card-title>Fastest Expiring</mat-card-title>
-                    <mat-card-subtitle>{{ fastestExpiringType }}</mat-card-subtitle>
-                  </mat-card-header>
-                  <br>
-                </mat-card>
-              </div>
-
-            </div>
-
-            <br>
-
-            <!-- Expiring Soon + Recently Expired -->
-            <div class="row">
-
-              <!-- Expiring Soon -->
-              <div class="col-12 col-md-6">
-                <mat-card appearance="outlined">
-                  <mat-card-header>
-                    <mat-card-subtitle>Expiring in Next 30 Days</mat-card-subtitle>
-                  </mat-card-header>
-                  <mat-card-content>
-
-                    <table class="table table-striped table-sm mb-0">
-                      <thead>
-                        <tr>
-                          <th><small>Employee</small></th>
-                          <th><small>Document</small></th>
-                          <th><small>Expiry</small></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let d of expiringSoonPaged">
-                          <td><small>{{ d.EMPNAME }}</small></td>
-                          <td><small>{{ d.DocumentName }}</small></td>
-                          <td><small>{{ d.ExpiryDate | date:'mediumDate' }}</small></td>
-                        </tr>
-                      </tbody>
-                    </table>
-
-                    <mat-paginator #expSoonPag [pageSize]="10" [length]="expiringSoonList.length"></mat-paginator>
-
-                  </mat-card-content>
-                </mat-card>
-              </div>
-
-              <!-- Recently Expired -->
-              <div class="col-12 col-md-6">
-                <mat-card appearance="outlined">
-                  <mat-card-header>
-                    <mat-card-subtitle>Recently Expired</mat-card-subtitle>
-                  </mat-card-header>
-                  <mat-card-content>
-
-                    <table class="table table-striped table-sm mb-0">
-                      <thead>
-                        <tr>
-                          <th><small>Employee</small></th>
-                          <th><small>Document</small></th>
-                          <th><small>Expired On</small></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let d of expiredPaged">
-                          <td><small>{{ d.EMPNAME }}</small></td>
-                          <td><small>{{ d.DocumentName }}</small></td>
-                          <td><small>{{ d.ExpiryDate | date:'mediumDate' }}</small></td>
-                        </tr>
-                      </tbody>
-                    </table>
-
-                    <mat-paginator #expiredPag [pageSize]="10" [length]="expiredDocumentsList.length"></mat-paginator>
-
-                  </mat-card-content>
-                </mat-card>
-              </div>
-
-            </div>
-
-            <br>
-
             <!-- Expiry Trend -->
             <div class="row">
               <div class="col-12">
@@ -389,7 +393,8 @@
             <table class="table table-hover table-responsive-xxl">
               <thead class="table-dark">
                 <tr>
-                  <th>Document</th>
+                  <th>Document Type</th>
+                  <th>Document Number</th>                  
                   <th>Employee</th>
                   <th>Department</th>
                   <th>Issue</th>
@@ -401,6 +406,7 @@
               <tbody>
                 <tr *ngFor="let d of (documentList | filterTable:searchText | slice:0:25)">
                   <td>{{ d.DocumentName }}</td>
+                  <td>{{ d.DocNo }}</td>
                   <td>{{ d.EMPNAME }}</td>
                   <td>{{ d.DEPARTMENT_NAME }}</td>
                   <td>{{ d.IssueDate | date:'shortDate' }}</td>

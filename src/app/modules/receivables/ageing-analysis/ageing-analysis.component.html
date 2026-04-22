@@ -1,0 +1,149 @@
+<div class="container-fluid">
+    <div class="row no-gutters">
+        <div class="visualization-heading col-12">
+            <div class="heading-info">
+                <div class="row">
+                    <div class="col">                
+                        <h3 class="heading-title">Receivables Ageing Analysis</h3>
+                    </div>
+                    <div class="col-1">
+                        <!--<div class="row">
+                            <div class="col">
+                                <button class="btn-info text-white btn btn-block btn-sm"  title="Print Employee Demographics" style="float: right" (click)="exportEmployeeDemographics()">
+                                    <mat-icon>print</mat-icon> 
+                                </button>
+                            </div>
+                        </div>-->
+                    </div>
+                </div>
+                <hr>
+            
+                <!-- KPI CARDS -->
+                <div class="row">
+                    <div class="col-md-2" *ngFor="let kpi of kpiCards">
+                        <mat-card appearance="outlined" [style.background]="kpi.color" style="color:white">
+                            <mat-card-header>
+                                <mat-card-title align="start">{{ kpi.value | number:'1.0-2' }}</mat-card-title>
+                                <mat-card-subtitle>{{ kpi.label }}</mat-card-subtitle>
+                            </mat-card-header>
+                            <br>
+                        </mat-card>
+                    </div>
+                </div>
+                <br />  
+                <!-- AGEING DISTRIBUTION -->
+                <div class="col-12">
+                    <mat-card appearance="outlined">
+                        <mat-card-header>
+                            <mat-card-subtitle>Ageing Distribution</mat-card-subtitle>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <ngx-charts-bar-vertical [results]="ageingBucketChart" [xAxis]="true" [yAxis]="true" [showDataLabel]="true">
+                            </ngx-charts-bar-vertical>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+                <br />
+
+                <!-- SALES PERSON -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <mat-card appearance="outlined">
+                            <mat-card-header>
+                                <mat-card-subtitle>Outstanding by Salesperson</mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <ngx-charts-pie-chart [results]="salespersonChart" [labels]="true" [legend]="false">
+                                </ngx-charts-pie-chart>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                    <div class="col-md-6">
+                        <mat-card appearance="outlined">
+                            <mat-card-header>
+                                <mat-card-subtitle>Overdue vs Not Due</mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <ngx-charts-pie-chart [results]="overduePie" [labels]="true" [legend]="false">
+                                </ngx-charts-pie-chart>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                    <!--
+                    <div class="col-md-6">
+                        <mat-card appearance="outlined">
+                            <mat-card-header>
+                                <mat-card-subtitle>Salesperson × Ageing (Heatmap)</mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <ngx-charts-heat-map [results]="salespersonAgeingHeatmap" [legend]="true">
+                                </ngx-charts-heat-map>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                    -->
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-12">
+                        <mat-card appearance="outlined">
+                            <mat-card-header>
+                                <mat-card-subtitle>Top Customers by Outstanding</mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <table class="table table-sm table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Customer</th>
+                                            <th>Total Outstanding</th>
+                                            <th>Max Days Due</th>
+                                            <th>Contact</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let c of topCustomers">
+                                            <td>{{ c.name }}</td>
+                                            <td>{{ c.total | number:'1.0-2' }}</td>
+                                            <td>{{ c.days }}</td>
+                                            <td>{{ c.contact }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </div>
+                <br />
+                <!-- INVOICE TABLE -->
+                <div class="row">
+                    <div class="col-12">
+                        <input type="text" class="form-control mb-2" [(ngModel)]="searchText" placeholder="Search invoices..." />
+                        <table class="table table-hover table-sm">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Invoice</th>
+                                    <th>Customer</th>
+                                    <th>Salesperson</th>
+                                    <th>Due Date</th>
+                                    <th>Days</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let inv of filteredInvoices">
+                                    <td>{{ inv.DocNum }}</td>
+                                    <td>{{ inv['Customer Name'] }}</td>
+                                    <td>{{ inv['Sales Person'] || '—' }}</td>
+                                    <td>{{ inv.DocDueDate | date:'mediumDate' }}</td>
+                                    <td>{{ inv['Days Due'] }}</td>
+                                    <td>{{ inv.Balance | number:'1.0-2' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>   
+</div>
+<br>
