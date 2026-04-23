@@ -324,8 +324,8 @@
         <tr *ngFor="let row of soaData">
           <td>{{ row.DocDate | date:'dd-MM-yyyy' }}</td>
           <td>{{ row.DocNum }}</td>
-          <td>{{ row.Ref }}</td>
-          <td>{{ row.Sub }}</td>
+          <td>{{ row.Reference }}</td>
+          <td>{{ row.Description }}</td>
           <td>{{ row.DocDueDate | date:'dd-MM-yyyy' }}</td>
           <td class="text-end">{{ row.DocTotal | number:'1.3-3' }}</td>
           <td class="text-end">{{ row.Balance | number:'1.3-3' }}</td>

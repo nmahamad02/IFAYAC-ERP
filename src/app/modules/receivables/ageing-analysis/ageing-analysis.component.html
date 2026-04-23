@@ -85,7 +85,7 @@
                 </div>
                 <br />
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-6">
                         <mat-card appearance="outlined">
                             <mat-card-header>
                                 <mat-card-subtitle>Top Customers by Outstanding</mat-card-subtitle>
@@ -97,7 +97,7 @@
                                             <th>Customer</th>
                                             <th>Total Outstanding</th>
                                             <th>Max Days Due</th>
-                                            <th>Contact</th>
+                                            <!--<th>Contact</th>-->
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -105,7 +105,7 @@
                                             <td>{{ c.name }}</td>
                                             <td>{{ c.total | number:'1.0-2' }}</td>
                                             <td>{{ c.days }}</td>
-                                            <td>{{ c.contact }}</td>
+                                            <!--<td>{{ c.contact }}</td>-->
                                         </tr>
                                     </tbody>
                                 </table>
@@ -121,22 +121,51 @@
                         <table class="table table-hover table-sm">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>Invoice</th>
-                                    <th>Customer</th>
+                                    <th>Invoice Number</th>
+
+<th (click)="sortBy('DocDate')">
+  Invoice Date
+  <span *ngIf="sortColumn === 'DocDate'">
+    {{ sortDirection === 'asc' ? '▲' : '▼' }}
+  </span>
+</th>
+                                    <th>Customer Code</th>
+                                    <th>Customer Name</th>
                                     <th>Salesperson</th>
-                                    <th>Due Date</th>
-                                    <th>Days</th>
-                                    <th>Balance</th>
+                                    
+<th (click)="sortBy('DocDueDate')">
+  Due Date
+  <span *ngIf="sortColumn === 'DocDueDate'">
+    {{ sortDirection === 'asc' ? '▲' : '▼' }}
+  </span>
+</th>
+
+<th (click)="sortBy('Days Due')">
+  Days
+  <span *ngIf="sortColumn === 'Days Due'">
+    {{ sortDirection === 'asc' ? '▲' : '▼' }}
+  </span>
+</th>
+
+
+<th (click)="sortBy('Balance')">
+  Balance
+  <span *ngIf="sortColumn === 'Balance'">
+    {{ sortDirection === 'asc' ? '▲' : '▼' }}
+  </span>
+</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let inv of filteredInvoices">
                                     <td>{{ inv.DocNum }}</td>
-                                    <td>{{ inv['Customer Name'] }}</td>
+                                    <td>{{ inv.DocDate | date:'mediumDate'  }}</td>
+                                    <td>{{ inv['CardCode'] }}</td>
+                                    <td>{{ inv['CardName'] }}</td>
                                     <td>{{ inv['Sales Person'] || '—' }}</td>
                                     <td>{{ inv.DocDueDate | date:'mediumDate' }}</td>
                                     <td>{{ inv['Days Due'] }}</td>
-                                    <td>{{ inv.Balance | number:'1.0-2' }}</td>
+                                    <td>{{ inv.Balance | number:'1.0-3' }}</td>
                                 </tr>
                             </tbody>
                         </table>

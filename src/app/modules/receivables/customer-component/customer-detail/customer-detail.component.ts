@@ -404,12 +404,12 @@ getCustomerSoa() {
       this.closingBalance += bal;
 
       // Summarize ageing bands
-      this.ageingSummary['FUTURE_REMIT'] += Number(row['Future Remit']) || 0;
-      this.ageingSummary['0_30_DAYS'] += Number(row['0-30 Days']) || 0;
-      this.ageingSummary['31_60_DAYS'] += Number(row['31-60 Days']) || 0;
-      this.ageingSummary['61_90_DAYS'] += Number(row['61-90 Days']) || 0;
-      this.ageingSummary['91_120_DAYS'] += Number(row['91-120 Days']) || 0;
-      this.ageingSummary['121_364_DAYS'] += Number(row['121-364 Days']) || 0;
+      this.ageingSummary['FUTURE_REMIT'] += Number(row['Future']) || 0;
+      this.ageingSummary['0_30_DAYS'] += Number(row['0-30']) || 0;
+      this.ageingSummary['31_60_DAYS'] += Number(row['31-60']) || 0;
+      this.ageingSummary['61_90_DAYS'] += Number(row['61-90']) || 0;
+      this.ageingSummary['91_120_DAYS'] += Number(row['91-120']) || 0;
+      this.ageingSummary['121_364_DAYS'] += Number(row['121-364']) || 0;
       this.ageingSummary['ABOVE_1_YEAR'] += Number(row['>1 YEAR']) || 0;
     });
   });

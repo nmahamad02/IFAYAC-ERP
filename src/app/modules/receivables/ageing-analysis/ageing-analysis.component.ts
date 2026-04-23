@@ -24,6 +24,11 @@ ageingData: any[] = [];
   salespersonAgeingHeatmap: any[] = [];
   topCustomers: any[] = [];
 
+  
+sortColumn: string = '';
+sortDirection: 'asc' | 'desc' = 'asc';
+
+
     constructor(private financeService: FinanceService, private route: ActivatedRoute, private dialog: MatDialog, private router: Router, private accountService: AccountsService, private reportService: ReportsService, private dataSharingService: DataSharingService, private cdr: ChangeDetectorRef) { }
 
 
@@ -94,8 +99,8 @@ buildKPIs() {
   // ---------------- Ageing Buckets ----------------
   buildAgeingBuckets() {
     const buckets = [
-      '0-30 Days','31-60 Days','61-90 Days',
-      '91-120 Days','121-364 Days','>1 YEAR'
+      '0-30','31-60','61-90',
+      '91-120','121-364','>1 YEAR'
     ];
 
     this.ageingBucketChart = buckets.map(b => ({
@@ -134,7 +139,7 @@ buildKPIs() {
       spTotals[sp] = (spTotals[sp] || 0) + bal;
       heatmap[sp] = heatmap[sp] || {};
 
-      ['0-30 Days','31-60 Days','61-90 Days','91-120 Days','>1 YEAR']
+      ['0-30','31-60','61-90','91-120','121-364','>1 YEAR']
         .forEach(b => {
           heatmap[sp][b] = (heatmap[sp][b] || 0) + (+e[b] || 0);
         });
@@ -145,8 +150,7 @@ buildKPIs() {
 
     this.salespersonAgeingHeatmap = Object.entries(heatmap)
       .map(([sp, buckets]: any) => ({
-        
-name: sp,
+        name: sp,
         series: Object.entries(buckets).map(([b, v]) => ({ name: b, value: v }))
       }));
   }
@@ -156,9 +160,9 @@ name: sp,
     const cust: any = {};
 
     this.ageingData.forEach(e => {
-      const name = e['Customer Name'];
+      const name = e['CardName'];
       if (!cust[name]) {
-        cust[name] = { total: 0, days: 0, contact: e['contact person'] };
+        cust[name] = { total: 0, days: 0};//, contact: e['contact person'] };
       }
       cust[name].total += +e.Balance || 0;
       cust[name].days = Math.max(cust[name].days, e["Days Due"] || 0);
@@ -176,4 +180,37 @@ get filteredInvoices() {
       JSON.stringify(e).toLowerCase().includes(this.searchText.toLowerCase())
     );
   }
+
+
+sortBy(column: string) {
+  if (this.sortColumn === column) {
+    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    this.sortColumn = column;
+    this.sortDirection = 'asc';
+  }
+
+  this.ageingData.sort((a, b) => {
+    let valueA = a[column];
+    let valueB = b[column];
+
+    // Handle dates
+    if (column === 'DocDate' || column === 'DocDueDate') {
+      valueA = new Date(valueA).getTime();
+      valueB = new Date(valueB).getTime();
+    }
+
+    // Handle numbers
+    if (!isNaN(valueA) && !isNaN(valueB)) {
+      return this.sortDirection === 'asc'
+        ? valueA - valueB
+        : valueB - valueA;
+    }
+
+    // Handle strings
+    return this.sortDirection === 'asc'
+      ? String(valueA).localeCompare(String(valueB))
+      : String(valueB).localeCompare(String(valueA));
+  });
+}
 }
