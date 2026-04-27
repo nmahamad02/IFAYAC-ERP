@@ -23,6 +23,7 @@ ageingData: any[] = [];
   salespersonChart: any[] = [];
   salespersonAgeingHeatmap: any[] = [];
   topCustomers: any[] = [];
+  yearWiseOutstandingChart: any[] = [];
 
   
 sortColumn: string = '';
@@ -44,6 +45,7 @@ ngOnInit() {
       this.buildOverdueSplit();
       this.buildSalespersonCharts();
       this.buildTopCustomers();
+      this.loadYearwiseAgeing();
     });
   }
 
@@ -97,17 +99,22 @@ buildKPIs() {
 
   
   // ---------------- Ageing Buckets ----------------
-  buildAgeingBuckets() {
-    const buckets = [
-      '0-30','31-60','61-90',
-      '91-120','121-364','>1 YEAR'
-    ];
+buildAgeingBuckets() {
+  const buckets = ['0-30','31-60','61-90','91-120','121-364','>1 YEAR'];
 
-    this.ageingBucketChart = buckets.map(b => ({
+  this.ageingBucketChart = buckets.map(b => {
+    const total = this.ageingData.reduce((sum, e) => {
+      const raw = e[b];
+      const val = Number(raw);
+      return !isNaN(val) ? sum + val : sum;
+    }, 0);
+
+    return {
       name: b,
-      value: this.ageingData.reduce((a, e) => a + (+e[b] || 0), 0)
-    }));
-  }
+      value: Math.abs(total)   // important for charts
+    };
+  });
+}
 
   
  // ---------------- Overdue Split ----------------
@@ -156,23 +163,28 @@ buildKPIs() {
   }
 
   // ---------------- Top Customers ----------------
-  buildTopCustomers() {
-    const cust: any = {};
+buildTopCustomers() {
+  const cust: any = {};
 
-    this.ageingData.forEach(e => {
-      const name = e['CardName'];
-      if (!cust[name]) {
-        cust[name] = { total: 0, days: 0};//, contact: e['contact person'] };
-      }
-      cust[name].total += +e.Balance || 0;
-      cust[name].days = Math.max(cust[name].days, e["Days Due"] || 0);
-    });
+  this.ageingData.forEach(e => {
+    const name =
+      e['CardName'] ||
+      e['CardCode'] ||
+      'Unknown Customer';
 
-    this.topCustomers = Object.entries(cust)
-      .map(([name, v]: any) => ({ name, ...v }))
-      .sort((a, b) => b.total - a.total)
-      .slice(0, 10);
-  }
+    if (!cust[name]) {
+      cust[name] = { total: 0, days: 0 };
+    }
+
+    cust[name].total += Number(e.Balance) || 0;
+    cust[name].days = Math.max(cust[name].days, Number(e['Days Due']) || 0);
+  });
+
+  this.topCustomers = Object.entries(cust)
+    .map(([name, v]: any) => ({ name, ...v }))
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 10);
+}
 
 
 get filteredInvoices() {
@@ -181,6 +193,42 @@ get filteredInvoices() {
     );
   }
 
+  buildYearWiseOutstanding() {
+  const yearly: Record<number, number> = {};
+
+  this.ageingData.forEach(e => {
+    if (!e.DocDueDate) return;
+
+    const year = new Date(e.DocDueDate).getFullYear();
+    const amount = Number(e.Balance) || 0;
+
+    yearly[year] = (yearly[year] || 0) + amount;
+  });
+
+  // Convert to array for tables / charts
+  return Object.entries(yearly)
+    .map(([year, total]) => ({
+      year: Number(year),
+      total
+    }))
+    .sort((a, b) => a.year - b.year);
+}
+
+yearWiseOutstanding: any[] = [];
+
+loadYearwiseAgeing() {
+  this.reportService.getCustAge().subscribe((res: any) => {
+    if (!res || !res.length) return;
+
+    this.ageingData = res;
+    this.yearWiseOutstanding = this.buildYearWiseOutstanding();
+
+    this.yearWiseOutstandingChart = this.yearWiseOutstanding.map(y => ({
+      name: y.year.toString(),
+      value: Math.abs(y.total)   // charts behave better positive
+    }));
+  });
+}
 
 sortBy(column: string) {
   if (this.sortColumn === column) {

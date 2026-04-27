@@ -23,7 +23,7 @@
                     <div class="col-md-2" *ngFor="let kpi of kpiCards">
                         <mat-card appearance="outlined" [style.background]="kpi.color" style="color:white">
                             <mat-card-header>
-                                <mat-card-title align="start">{{ kpi.value | number:'1.0-2' }}</mat-card-title>
+                                <mat-card-title align="start">{{ kpi.value | number:'1.3-3' }}</mat-card-title>
                                 <mat-card-subtitle>{{ kpi.label }}</mat-card-subtitle>
                             </mat-card-header>
                             <br>
@@ -86,7 +86,7 @@
                 <br />
                 <div class="row">
                     <div class="col-6">
-                        <mat-card appearance="outlined">
+                        <mat-card appearance="outlined" class="equal-card">
                             <mat-card-header>
                                 <mat-card-subtitle>Top Customers by Outstanding</mat-card-subtitle>
                             </mat-card-header>
@@ -102,13 +102,48 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let c of topCustomers">
-                                            <td>{{ c.name }}</td>
-                                            <td>{{ c.total | number:'1.0-2' }}</td>
-                                            <td>{{ c.days }}</td>
-                                            <!--<td>{{ c.contact }}</td>-->
+                                            <td><small>{{ c.name }}</small></td>
+                                            <td align="end"><small>{{ c.total | number:'1.3-3' }}</small></td>
+                                            <td align="end"><small>{{ c.days }}</small></td>
+                                            <!--<td><small>{{ c.contact }}</small></td>-->
                                         </tr>
                                     </tbody>
                                 </table>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                    <div class="col-6">
+                        <mat-card appearance="outlined" class="equal-card">
+                            <mat-card-header>
+                                <mat-card-subtitle>Year‑wise Outstanding</mat-card-subtitle>
+                            </mat-card-header>
+
+                            <mat-card-content>
+                                <!--<table class="table table-sm table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Year</th>
+                                            <th class="amount">Outstanding</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let y of yearWiseOutstanding">
+                                            <td>{{ y.year }}</td>
+                                            <td class="amount">{{ y.total | number:'1.3-3' }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>-->
+                                <mat-card appearance="outlined" class="equal-card">
+                                    <mat-card-content>
+                                        <ngx-charts-bar-vertical
+                                        [results]="yearWiseOutstandingChart"
+                                        [xAxis]="true"
+                                        [yAxis]="true"
+                                        [showDataLabel]="true"
+                                        [roundEdges]="false">
+                                        </ngx-charts-bar-vertical>
+                                    </mat-card-content>
+                                </mat-card>
                             </mat-card-content>
                         </mat-card>
                     </div>
@@ -158,14 +193,14 @@
                             </thead>
                             <tbody>
                                 <tr *ngFor="let inv of filteredInvoices">
-                                    <td>{{ inv.DocNum }}</td>
-                                    <td>{{ inv.DocDate | date:'mediumDate'  }}</td>
-                                    <td>{{ inv['CardCode'] }}</td>
-                                    <td>{{ inv['CardName'] }}</td>
-                                    <td>{{ inv['Sales Person'] || '—' }}</td>
-                                    <td>{{ inv.DocDueDate | date:'mediumDate' }}</td>
-                                    <td>{{ inv['Days Due'] }}</td>
-                                    <td>{{ inv.Balance | number:'1.0-3' }}</td>
+                                    <td><small>{{ inv.DocNum }}</small></td>
+                                    <td><small>{{ inv.DocDate | date:'mediumDate'  }}</small></td>
+                                    <td><small>{{ inv['CardCode'] }}</small></td>
+                                    <td><small>{{ inv['CardName'] }}</small></td>
+                                    <td><small>{{ inv['Sales Person'] || '—' }}</small></td>
+                                    <td><small>{{ inv.DocDueDate | date:'mediumDate' }}</small></td>
+                                    <td align="end"><small>{{ inv['Days Due'] }}</small></td>
+                                    <td align="end"><small>{{ inv.Balance | number:'1.3-3' }}</small></td>
                                 </tr>
                             </tbody>
                         </table>

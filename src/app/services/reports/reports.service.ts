@@ -202,4 +202,7 @@ export class ReportsService {
     return this.http.get(this.url1 + '/hana/getCustAge')
   }
 
+  stocklist() {
+    return this.http.get(this.url1 + '/hana/stocklist')
+  }
 }

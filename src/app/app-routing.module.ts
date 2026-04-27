@@ -51,6 +51,10 @@ const routes: Routes = [
   {
     path: 'Wagesadmin',
     loadChildren: () => import('./modules/wageadmin/wageadmin.module').then(m => m.WageadminModule)
+  },  
+  {
+    path: 'inventory',
+    loadChildren: () => import('./modules/inventory/inventory.module').then(m => m.InventoryModule)
   },
   {
     path: '**',
